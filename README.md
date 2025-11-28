@@ -7,6 +7,14 @@ A C++ scheduling component developed for the university web project `Gestion de 
 - Intended to be called from a PHP web backend.
 - Includes a greedy scheduling algorithm and utilities for rooms, teachers, tutors and students.
 
+## Use releases to deploy binary
+If only the binary file is going to be run, you can download it from the releases page, here is an example:
+```bash
+curl -L -o bin/main https://github.com/713koukou-naizaa/presentations_scheduler/releases/download/v1.0.0/main
+chmod +x bin/main
+```
+Le fichier est ensuite prêt à être exécuté.
+
 ## Build
 A helper wrapper `exec.sh` is available for consistent invocation:
 ```bash
