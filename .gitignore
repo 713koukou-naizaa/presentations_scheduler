@@ -1,6 +1,5 @@
 # User custom
 .idea
-bin
 run.sh
 web_launcher.php
 
