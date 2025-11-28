@@ -17,8 +17,8 @@ void Scheduler::ensureDayCapacity(const unsigned short int pDay) {
     {
         if (static_cast<unsigned short int>(currentRoom.mMorningPointerByDay.size()) <= pDay)
         {
-            currentRoom.mMorningPointerByDay.resize(pDay+1, globalConsts::START_MORNING_TIME);
-            currentRoom.mAfternoonPointerByDay.resize(pDay+1, globalConsts::START_AFTERNOON_TIME);
+            currentRoom.mMorningPointerByDay.resize(pDay+1, GLOBAL_CONFIG.START_MORNING_TIME);
+            currentRoom.mAfternoonPointerByDay.resize(pDay+1, GLOBAL_CONFIG.START_AFTERNOON_TIME);
         }
     }
 
@@ -62,7 +62,7 @@ bool Scheduler::scheduleAll()
                 // If the current end time is before the end of morning, try the slot at room.mMorningPointerByDay[tryDay] (morning pointer)
                 unsigned short int start = room.mMorningPointerByDay[tryDay];
                 unsigned short int end = start + duration;
-                if (end <= globalConsts::END_MORNING_TIME)
+                if (end <= GLOBAL_CONFIG.END_MORNING_TIME)
                 {
                     Utils::Interval currentSlot{start, end};
 
@@ -76,7 +76,7 @@ bool Scheduler::scheduleAll()
                 // Else try afternoon pointer
                 start = room.mAfternoonPointerByDay[tryDay];
                 end = start + duration;
-                if (end <= globalConsts::END_AFTERNOON_TIME && !isCurrentStudentPlaced)
+                if (end <= GLOBAL_CONFIG.END_AFTERNOON_TIME && !isCurrentStudentPlaced)
                 {
                     Utils::Interval currentSlot{start, end};
 
@@ -177,9 +177,9 @@ void Scheduler::place(const Student &pStudent, unsigned short int pDay, const Ut
     ensureDayCapacity(pDay);
     Room &usedRoom = mRooms[pRoomId];
     // Decide whether we used morning or afternoon pointer
-    if (pSlot.mStart >= globalConsts::START_MORNING_TIME && pSlot.mEnd <= globalConsts::END_MORNING_TIME && pSlot.mStart == usedRoom.mMorningPointerByDay[pDay])
+    if (pSlot.mStart >= GLOBAL_CONFIG.START_MORNING_TIME && pSlot.mEnd <= GLOBAL_CONFIG.END_MORNING_TIME && pSlot.mStart == usedRoom.mMorningPointerByDay[pDay])
     { usedRoom.mMorningPointerByDay[pDay] = pSlot.mEnd + this->mBreakLength; }
-    else if (pSlot.mStart >= globalConsts::START_AFTERNOON_TIME && pSlot.mEnd <= globalConsts::END_AFTERNOON_TIME && pSlot.mStart == usedRoom.mAfternoonPointerByDay[pDay])
+    else if (pSlot.mStart >= GLOBAL_CONFIG.START_AFTERNOON_TIME && pSlot.mEnd <= GLOBAL_CONFIG.END_AFTERNOON_TIME && pSlot.mStart == usedRoom.mAfternoonPointerByDay[pDay])
     { usedRoom.mAfternoonPointerByDay[pDay] = pSlot.mEnd + this->mBreakLength; }
     else
     {

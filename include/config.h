@@ -1,41 +1,27 @@
-#ifndef GLOBALCONSTS_H
-#define GLOBALCONSTS_H
+#ifndef CONFIG_H
+#define CONFIG_H
 
-namespace globalConsts
+struct Config
 {
     // CONSTANTS
-    inline constexpr unsigned short int START_MORNING_TIME = 7 * 60; // 07:00
-    inline constexpr unsigned short int END_MORNING_TIME = 12 * 60 + 30; // 12:00
-    inline constexpr unsigned short int START_AFTERNOON_TIME = 14 * 60; // 14:00
-    inline constexpr unsigned short int END_AFTERNOON_TIME = 17 * 60; // 17:00
+   unsigned short int START_MORNING_TIME;
+   unsigned short int END_MORNING_TIME;
+   unsigned short int START_AFTERNOON_TIME;
+   unsigned short int END_AFTERNOON_TIME;
 
-    inline constexpr unsigned short int NORMAL_PRESENTATION_LENGTH = 60; // 60 minutes
-    inline constexpr unsigned short int ACCOMODATED_PRESENTATION_LENGTH = 80; // 80 minutes if student has accommodations
-    inline constexpr unsigned short int IN_BETWEEN_BREAK_LENGTH = 5; // 5 minutes break after each presentation
+   unsigned short int NORMAL_PRESENTATION_LENGTH;
+   unsigned short int ACCOMMODATED_PRESENTATION_LENGTH;
+   unsigned short int IN_BETWEEN_BREAK_LENGTH;
 
-    inline constexpr unsigned short int MAX_TEACHERS_WEEKLY_WORKED_TIME = 20 * 60; // 20 hours per teacher per week
+   unsigned short int MAX_TEACHERS_WEEKLY_WORKED_TIME;
 
-    // Worst case scenario
-    // inline constexpr unsigned short int NB_STUDENTS = 62;
-    // inline constexpr unsigned short int NB_TEACHERS = 10;
-    // inline constexpr unsigned short int NB_ROOMS = 7;
-    
-    // Average scenario 1
-    // inline constexpr unsigned short int NB_STUDENTS = 60;
-    // inline constexpr unsigned short int NB_TEACHERS = 12;
-    // inline constexpr unsigned short int NB_ROOMS = 8;
+   unsigned short int NB_STUDENTS;
+   unsigned short int NB_TEACHERS;
+   unsigned short int NB_ROOMS;
 
-    // Average scenario 2
-    inline constexpr unsigned short int NB_STUDENTS = 60;
-    inline constexpr unsigned short int NB_TEACHERS = 15;
-    inline constexpr unsigned short int NB_ROOMS = 8;
+   unsigned short int NB_TUTORS;
+};
 
-    // Good scenario
-    // inline constexpr unsigned short int NB_STUDENTS = 55;
-    // inline constexpr unsigned short int NB_TEACHERS = 14;
-    // inline constexpr unsigned short int NB_ROOMS = 9;
-
-    inline constexpr unsigned short int NB_TUTORS = NB_STUDENTS; // 1 tutor per student (doesn't matter)
-}
+extern Config GLOBAL_CONFIG;
 
 #endif

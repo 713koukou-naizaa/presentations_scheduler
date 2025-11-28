@@ -2,12 +2,12 @@
 
 #include <iostream>
 
-#include "globalConsts.h"
+#include "config.h"
 
 using std::cout;
 using std::endl;
 
-string Utils::minutesToHHMM(unsigned short int pMinutes)
+string Utils::minutesToHHMM(const unsigned short int pMinutes)
 {
     const unsigned short int hh = pMinutes / 60;
     const unsigned short int mm = pMinutes % 60;
@@ -23,26 +23,26 @@ void Utils::printParameters()
     cout << endl;
 
     cout << "Quantities:" << endl;
-    cout << "\tNumber of students: " << globalConsts::NB_STUDENTS << endl;
-    cout << "\tNumber of teachers: " << globalConsts::NB_TEACHERS << endl;
-    cout << "\tNumber of rooms: " << globalConsts::NB_ROOMS << endl;
-    cout << "\tNumber of tutors: " << globalConsts::NB_TUTORS << endl;
+    cout << "\tNumber of students: " << GLOBAL_CONFIG.NB_STUDENTS << endl;
+    cout << "\tNumber of teachers: " << GLOBAL_CONFIG.NB_TEACHERS << endl;
+    cout << "\tNumber of rooms: " << GLOBAL_CONFIG.NB_ROOMS << endl;
+    cout << "\tNumber of tutors: " << GLOBAL_CONFIG.NB_TUTORS << endl;
 
     cout << endl;
 
     cout << "Time lengths:" << endl;
-    cout << "\tPresentation length: " << globalConsts::NORMAL_PRESENTATION_LENGTH << " minutes" << endl;
-    cout << "\tAccommodated presentation length: " << globalConsts::ACCOMODATED_PRESENTATION_LENGTH << " minutes" << endl;
-    cout << "\tIn-between break length: " << globalConsts::IN_BETWEEN_BREAK_LENGTH << " minutes" << endl;
-    cout << "\tMax teachers weekly worked time: " << globalConsts::MAX_TEACHERS_WEEKLY_WORKED_TIME << " minutes" << endl;
+    cout << "\tPresentation length: " << GLOBAL_CONFIG.NORMAL_PRESENTATION_LENGTH << " minutes" << endl;
+    cout << "\tAccommodated presentation length: " << GLOBAL_CONFIG.ACCOMMODATED_PRESENTATION_LENGTH << " minutes" << endl;
+    cout << "\tIn-between break length: " << GLOBAL_CONFIG.IN_BETWEEN_BREAK_LENGTH << " minutes" << endl;
+    cout << "\tMax teachers weekly worked time: " << GLOBAL_CONFIG.MAX_TEACHERS_WEEKLY_WORKED_TIME << " minutes" << endl;
 
     cout << endl;
 
     cout << "Times:" << endl;
-    cout << "\tStart morning time: " << Utils::minutesToHHMM(globalConsts::START_MORNING_TIME) << endl;
-    cout << "\tEnd morning time: " << Utils::minutesToHHMM(globalConsts::END_MORNING_TIME) << endl;
-    cout << "\tStart afternoon time: " << Utils::minutesToHHMM(globalConsts::START_AFTERNOON_TIME) << endl;
-    cout << "\tEnd afternoon time: " << Utils::minutesToHHMM(globalConsts::END_AFTERNOON_TIME) << endl;
+    cout << "\tStart morning time: " << Utils::minutesToHHMM(GLOBAL_CONFIG.START_MORNING_TIME) << endl;
+    cout << "\tEnd morning time: " << Utils::minutesToHHMM(GLOBAL_CONFIG.END_MORNING_TIME) << endl;
+    cout << "\tStart afternoon time: " << Utils::minutesToHHMM(GLOBAL_CONFIG.START_AFTERNOON_TIME) << endl;
+    cout << "\tEnd afternoon time: " << Utils::minutesToHHMM(GLOBAL_CONFIG.END_AFTERNOON_TIME) << endl;
 
     cout << endl;
 }

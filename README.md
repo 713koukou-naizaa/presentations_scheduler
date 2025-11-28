@@ -8,7 +8,7 @@ A C++ scheduling component developed for the university web project `Gestion de 
 - Includes a greedy scheduling algorithm and utilities for rooms, teachers, tutors and students.
 
 ## Build
-A helper wrapper `exec.sh` is available for consistent build and invocation:
+A helper wrapper `exec.sh` is available for consistent invocation:
 ```bash
 chmod +x exec.sh
 ./exec.sh
@@ -32,12 +32,53 @@ After building, run the scheduler binary:
 ```
 
 ## Integration with PHP
-Use `exec` or `shell_exec` to call `exec.sh` or `bin/main` from PHP and capture stdout/stderr.
+Use `exec` or `shell_exec` to call `exec.sh` or `bin/main` from PHP and capture stdout/stderr. Here is an example with exec:
+```php
+<?php
+// File web_launcher.php
+
+$startMorningHour = 7;
+$endMorningHour = 12;
+$startAfternoonHour = 14;
+$endAfternoonHour = 17;
+
+$maxTeachersWeeklyWorkedHours = 20;
+
+$startMorningTime = $startMorningHour * 60;
+$endMorningTime = $endMorningHour * 60 + 30;
+$startAfternoonTime = $startAfternoonHour * 60;
+$endAfternoonTime = $endAfternoonHour * 60;
+$normalPresentationLength = 1 * 60;
+$accommodatedPresentationLength = $normalPresentationLength + 20;
+$inBetweenBreakLength = 5;
+$maxTeachersWeeklyWorkedTime = $maxTeachersWeeklyWorkedHours * 60;
+$nbStudents = 60;
+$nbTeachers = 15;
+$nbRooms = 8;
+$nbTutors = $nbStudents;
+
+$cmd = "./exec.sh $startMorningTime $endMorningTime $startAfternoonTime $endAfternoonTime $normalPresentationLength $accommodatedPresentationLength $inBetweenBreakLength $maxTeachersWeeklyWorkedTime $nbStudents $nbTeachers $nbRooms $nbTutors";
+
+exec($cmd, $output, $status);
+
+if ($status != 0)
+{
+    echo "Error: " . $status . "\n";
+    exit(1);
+}
+
+foreach ($output as $line) { echo $line . "\n"; }
+```
+
+```bash
+chmod +x web_launcher.php
+php web_launcher.php
+```
 
 ## Project structure
 - `main.cpp` — program entry point
 - `Makefile` — build rules
-- `exec.sh` — helper wrapper to build and invoke the scheduler
+- `exec.sh` — helper wrapper to invoke the scheduler
 - `bin/` — compiled binary output (`bin/main`)
 - `src/` — implementation files (`Room.cpp`, `Scheduler.cpp`, `Teacher.cpp`, `Tutor.cpp`, `Utils.cpp`)
 - `include/` — public headers (`Presentation.h`, `Room.h`, `Scheduler.h`, `Student.h`, `Teacher.h`, `Tutor.h`, `Utils.h`, `globalConsts.h`)

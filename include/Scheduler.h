@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "globalConsts.h"
+#include "config.h"
 #include "Student.h"
 #include "Teacher.h"
 #include "Tutor.h"
@@ -21,7 +21,7 @@ struct Scheduler
     vector<Teacher> mTeachers;
     vector<Tutor> mTutors;
     vector<Room> mRooms;
-    int mBreakLength = globalConsts::IN_BETWEEN_BREAK_LENGTH;
+    int mBreakLength = GLOBAL_CONFIG.IN_BETWEEN_BREAK_LENGTH;
 
     vector<Presentation> mAssignments;
 
