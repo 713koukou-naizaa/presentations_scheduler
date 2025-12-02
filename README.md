@@ -7,90 +7,65 @@ A C++ scheduling component developed for the university web project `Gestion de 
 - Intended to be called from a PHP web backend.
 - Includes a greedy scheduling algorithm and utilities for rooms, teachers, tutors and students.
 
+## Generate dummy JSON data
+The [generateDummyJsonData.py](generateDummyJsonData.py) file generates dummy JSON data for teachers, tutors, students and rooms.
+
+```bash
+chmod +x generateDummyJsonData.py
+python generateDummyJsonData.py
+```
+
 ## Use releases to deploy binary
-If only the binary file is going to be run, you can download it from the releases page, here is an example:
-```bash
-curl -L -o bin/main https://github.com/713koukou-naizaa/presentations_scheduler/releases/download/v1.0.1/main
-chmod +x bin/main
-```
-Le fichier est ensuite prêt à être exécuté.
+If only the binary file is going to be run, you can download it from the releases page, here is an example (replace <verion> with the latest one (i.e. v1.0.1)).
 
-## Build
-A helper wrapper `exec.sh` is available for consistent invocation:
 ```bash
-chmod +x exec.sh
-./exec.sh
-```
+#!/bin/bash
 
-If you do not wish to use the provided shell script, from the project root:
-```bash
-make
-```
-This produces the executable (by default placed in) `bin/main`.
-
-To clean:
-```bash
-make clean
-```
-
-## Run
-After building, run the scheduler binary:
-```bash
-./bin/main
+curl -L -o bin/presentations_scheduler \
+  https://github.com/713koukou-naizaa/presentations_scheduler/releases/download/<version>/main
+chmod +x bin/presentations_scheduler
 ```
 
 ## Integration with PHP
-Use `exec` or `shell_exec` to call `exec.sh` or `bin/main` from PHP and capture stdout/stderr. Here is an example with exec:
-```php
-<?php
-// File web_launcher.php
-
-$startMorningHour = 7;
-$endMorningHour = 12;
-$startAfternoonHour = 14;
-$endAfternoonHour = 17;
-
-$maxTeachersWeeklyWorkedHours = 20;
-
-$startMorningTime = $startMorningHour * 60;
-$endMorningTime = $endMorningHour * 60 + 30;
-$startAfternoonTime = $startAfternoonHour * 60;
-$endAfternoonTime = $endAfternoonHour * 60;
-$normalPresentationLength = 1 * 60;
-$accommodatedPresentationLength = $normalPresentationLength + 20;
-$inBetweenBreakLength = 5;
-$maxTeachersWeeklyWorkedTime = $maxTeachersWeeklyWorkedHours * 60;
-$nbStudents = 60;
-$nbTeachers = 15;
-$nbRooms = 8;
-$nbTutors = $nbStudents;
-
-$cmd = "./exec.sh $startMorningTime $endMorningTime $startAfternoonTime $endAfternoonTime $normalPresentationLength $accommodatedPresentationLength $inBetweenBreakLength $maxTeachersWeeklyWorkedTime $nbStudents $nbTeachers $nbRooms $nbTutors";
-
-exec($cmd, $output, $status);
-
-if ($status != 0)
-{
-    echo "Error: " . $status . "\n";
-    exit(1);
-}
-
-foreach ($output as $line) { echo $line . "\n"; }
-```
+Use `exec`, `shell_exec` or `proc_open` to call [run.sh](run.sh) or directly `bin/main` from PHP and capture stdout/stderr. See the [prod_web_launcher.php](prod_web_launcher.php) file using exec as an example.
 
 ```bash
-chmod +x web_launcher.php
-php web_launcher.php
+chmod +x prod_web_launcher.php
+php prod_web_launcher.php
+```
+
+## Development example run
+The [simulate_dev_run.sh](simulate_dev_run.sh) file simulates a development run of the binary file (make using [Makefile](Makefile), call to the run shell script and call to the binary file).
+
+```bash
+chmod +x simulate_dev_run.sh
+./simulate_dev_run.sh
+```
+
+## Production example run
+The [simulate_prod_run.sh](simulate_prod_run.sh) file simulates a production run of the binary file (call to the php web launcher, call to the run shell script and call to the binary file).
+
+```bash
+chmod +x simulate_prod_run.sh
+./simulate_prod_run.sh
 ```
 
 ## Project structure
-- `main.cpp` — program entry point
-- `Makefile` — build rules
-- `exec.sh` — helper wrapper to invoke the scheduler
-- `bin/` — compiled binary output (`bin/main`)
+- `bin` - compiled binary output
+- `docs` documentations (algorithm outline, related documentation, ...)
+- `include/` - public headers (`config.h`, `json.hpp`, `Presentation.h`, `Room.h`, `Scheduler.h`, `Student.h`, `Teacher.h`, `Tutor.h`, `Utils.h`)
+- `json` - JSON files (`teachers.json`, `tutors.json`, `students.json`, `rooms.json`), created after dummy data generation
 - `src/` — implementation files (`Room.cpp`, `Scheduler.cpp`, `Teacher.cpp`, `Tutor.cpp`, `Utils.cpp`)
-- `include/` — public headers (`Presentation.h`, `Room.h`, `Scheduler.h`, `Student.h`, `Teacher.h`, `Tutor.h`, `Utils.h`, `globalConsts.h`)
-- `docs/` — algorithm outline and related documentation
+- `.gitignore` - git ignore file
+- `download_bin.sh` - download binary file example
+- `generateDummyJsonData.py` - generate dummy JSON data
+- `Makefile` - build rules
+- `main.cpp` - program entry point
+- `prod_web_launcher.php` - simulated php production run script
+- `README.md` - this file
+- `run.sh` - run the binary file
+- `simulate_dev_run.sh` - simulate a development run (make using Makefile, run php web launcher, run binary file)
+- `simulate_prod_run.sh` - simulate a production run script (run php web launcher, run binary file)
 
 ## Notes
 - The binary is intended to be light-weight and fast; prefer invoking it as an external process from the PHP web app rather than embedding heavy runtimes.

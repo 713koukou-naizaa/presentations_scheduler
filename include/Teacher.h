@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+#include "config.h"
 #include "Utils.h"
 
 using std::string;
@@ -14,7 +15,7 @@ struct Teacher
     unsigned short int mId{};
     string mName;
     bool mIsTechnical{};
-    unsigned short int mWeeklyRemainingMinutes{}; // minutes left for presentations this week
+    unsigned short int mWeeklyRemainingMinutes=GLOBAL_CONFIG.MAX_TEACHERS_WEEKLY_WORKED_TIME; // minutes left for presentations this week
     // schedule for avoiding overlaps: vector of (day -> intervals)
     vector<vector<Utils::Interval>> mBusyByDay; // mBusyByDay[day] = list of intervals
 

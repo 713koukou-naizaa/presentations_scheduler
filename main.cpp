@@ -14,9 +14,9 @@ Config GLOBAL_CONFIG;
 
 int main(const int argc, char* argv[])
 {
-    if (argc != 13)
+    if (argc != 9)
     {
-        std::cerr << "Usage: " << argv[0] << " <start_morning_time> <end_morning_time> <start_afternoon_time> <end_afternoon_time> <normal_presentation_length> <accommodated_presentation_length> <in_between_break_length> <max_teachers_weekly_worked_time> <nb_students> <nb_teachers> <nb_rooms> <nb_tutors>\n";
+        std::cerr << "Usage: " << argv[0] << " <start_morning_time> <end_morning_time> <start_afternoon_time> <end_afternoon_time> <normal_presentation_length> <accommodated_presentation_length> <in_between_break_length> <max_teachers_weekly_worked_time>\n";
         return 1;
     }
 
@@ -32,58 +32,18 @@ int main(const int argc, char* argv[])
 
     GLOBAL_CONFIG.MAX_TEACHERS_WEEKLY_WORKED_TIME=std::stoi(argv[8]);
 
-    GLOBAL_CONFIG.NB_STUDENTS=std::stoi(argv[9]);
-    GLOBAL_CONFIG.NB_TEACHERS=std::stoi(argv[10]);
-    GLOBAL_CONFIG.NB_ROOMS=std::stoi(argv[11]);
+    // Create teachers, tutors, students and rooms from JSON
+    const vector<Teacher> teachers = Utils::loadTeachersFromJson("json/teachers.json");
+    const vector<Tutor> tutors = Utils::loadTutorsFromJson("json/tutors.json");
+    const vector<Student> students = Utils::loadStudentsFromJson("json/students.json");
+    const vector<Room> rooms = Utils::loadRoomsFromJson("json/rooms.json");
 
-    GLOBAL_CONFIG.NB_TUTORS=std::stoi(argv[12]);
+    GLOBAL_CONFIG.NB_STUDENTS=students.size();
+    GLOBAL_CONFIG.NB_TEACHERS=teachers.size();
+    GLOBAL_CONFIG.NB_ROOMS=rooms.size();
+    GLOBAL_CONFIG.NB_TUTORS=tutors.size();
 
-    // Create teachers
-    vector<Teacher> teachers;
-    for(unsigned short int i=0; i<GLOBAL_CONFIG.NB_TEACHERS; ++i)
-    {
-        string name = (i<9) ? "Teacher_0" + to_string(i+1) : "Teacher_" + to_string(i+1);
-
-        bool isTech = (i % 2 == 0); // Half are technical
-
-        teachers.emplace_back(i, name, isTech, GLOBAL_CONFIG.MAX_TEACHERS_WEEKLY_WORKED_TIME, 1);
-    }
-
-    // Create tutors
-    vector<Tutor> tutors;
-    for(unsigned short int i=0; i<GLOBAL_CONFIG.NB_TUTORS; ++i)
-    {
-        string name = (i<9) ? "Tutor_0" + to_string(i+1) : "Tutor_" + to_string(i+1);
-
-        tutors.emplace_back(i, name, 1);
-    }
-
-    // Create students and assign referent teachers and assign tutors
-    vector<Student> students;
-    for(unsigned short int i=0; i<GLOBAL_CONFIG.NB_STUDENTS; ++i)
-    {
-        Student currentStudent;
-        currentStudent.mId = i;
-        currentStudent.mName = (i<9) ? "Student_0" + to_string(i+1) : "Student_" + to_string(i+1);
-        currentStudent.mHasAccommodations = (i % 4 == 0); // Quarter have accommodations
-        currentStudent.mEffectivePresentationLength = currentStudent.mHasAccommodations ? GLOBAL_CONFIG.ACCOMMODATED_PRESENTATION_LENGTH : GLOBAL_CONFIG.NORMAL_PRESENTATION_LENGTH;
-
-        // assign referent teacher using round-robin format
-        currentStudent.mReferentTeacherId = i % GLOBAL_CONFIG.NB_TEACHERS;
-
-        currentStudent.mTutorId = i;
-
-        students.push_back(currentStudent);
-    }
-
-    // Create rooms
-    vector<Room> rooms;
-    for(unsigned short int i=0; i<GLOBAL_CONFIG.NB_ROOMS; ++i)
-    {
-        string name = (i<9) ? "Room_0" + to_string(i+1) : "Room_" + to_string(i+1);
-
-        rooms.emplace_back(i, name, 1);
-    }
+    //Utils::displayVectors(students, teachers, tutors, rooms);
 
     // Create scheduler
     Scheduler schedule(students, teachers, tutors, rooms);

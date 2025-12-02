@@ -1,11 +1,147 @@
 #include "Utils.h"
 
 #include <iostream>
+#include <fstream>
+#include <sstream>
+#include <stdexcept>
 
 #include "config.h"
 
+#include "Student.h"
+#include "Teacher.h"
+#include "Tutor.h"
+#include "Room.h"
+
 using std::cout;
 using std::endl;
+
+void Utils::displayVectors(const vector<Student> &pStudents, const vector<Teacher> &pTeachers, const vector<Tutor> &pTutors, const vector<Room> &pRooms)
+{
+    // display all vectors
+    cout << "Students: " << endl;
+    for (const auto &student : pStudents)
+    {
+        cout << "\t" << student.mId << " " << student.mName << " " << student.mHasAccommodations << " " << student.mEffectivePresentationLength << " " << student.mReferentTeacherId << " " << student.mTutorId << endl;
+    }
+
+    cout << "Teachers: " << endl;
+    for (const auto &teacher : pTeachers)
+    {
+        cout << "\t" << teacher.mId << " " << teacher.mName << " " << teacher.mIsTechnical << " " << teacher.mWeeklyRemainingMinutes << endl;
+    }
+
+    cout << "Tutors: " << endl;
+    for (const auto &tutor : pTutors)
+    {
+        cout << "\t" << tutor.mId << " " << tutor.mName << endl;
+    }
+
+    cout << "Rooms: " << endl;
+    for (const auto &room : pRooms)
+    {
+        cout << "\t" << room.mId << " " << room.mTag << endl;
+    }
+}
+
+string Utils::loadFileToString(const string &pFilePath)
+{
+    std::ifstream pFileStream(pFilePath);
+    if (!pFileStream.is_open()) { throw std::runtime_error("Unable to open file: " + pFilePath); }
+
+    std::stringstream buffer;
+    buffer << pFileStream.rdbuf();
+    return buffer.str();
+}
+
+vector<Teacher> Utils::loadTeachersFromJson(const string &pJsonPath)
+{
+    string content = loadFileToString(pJsonPath);
+
+    nlohmann::json jsonInstance = nlohmann::json::parse(content);
+
+    vector<Teacher> teachers;
+    teachers.reserve(jsonInstance.size());
+
+    for (const auto &currentJsonItem : jsonInstance)
+    {
+        Teacher currentTeacher;
+        currentTeacher.mId = currentJsonItem.at("id").get<unsigned short int>();
+        currentTeacher.mName = currentJsonItem.at("name").get<string>();
+        currentTeacher.mIsTechnical = currentJsonItem.at("isTechnical").get<bool>();
+
+        teachers.push_back(currentTeacher);
+    }
+
+    return teachers;
+}
+
+vector<Tutor> Utils::loadTutorsFromJson(const string &pJsonPath)
+{
+    string content = loadFileToString(pJsonPath);
+
+    nlohmann::json jsonInstance = nlohmann::json::parse(content);
+
+    vector<Tutor> tutors;
+    tutors.reserve(jsonInstance.size());
+
+    for (const auto &currentJsonItem : jsonInstance)
+    {
+        Tutor currentTutor;
+        currentTutor.mId = currentJsonItem.at("id").get<unsigned short int>();
+        currentTutor.mName = currentJsonItem.at("name").get<string>();
+
+        tutors.push_back(currentTutor);
+    }
+
+    return tutors;
+}
+
+vector<Room> Utils::loadRoomsFromJson(const string &pJsonPath)
+{
+    string content = loadFileToString(pJsonPath);
+
+    nlohmann::json jsonInstance = nlohmann::json::parse(content);
+
+    vector<Room> rooms;
+    rooms.reserve(jsonInstance.size());
+
+    for (const auto &currentJsonItem : jsonInstance)
+    {
+        Room currentRoom;
+        currentRoom.mId = currentJsonItem.at("id").get<unsigned short int>();
+        currentRoom.mTag = currentJsonItem.at("tag").get<string>();
+
+        rooms.push_back(currentRoom);
+    }
+
+    return rooms;
+}
+
+vector<Student> Utils::loadStudentsFromJson(const string &pJsonPath)
+{
+    string content = loadFileToString(pJsonPath);
+
+    nlohmann::json jsonInstance = nlohmann::json::parse(content);
+
+    vector<Student> students;
+    students.reserve(jsonInstance.size());
+
+    for (const auto &currentJsonItem : jsonInstance)
+    {
+        Student currentStudent;
+        currentStudent.mId = currentJsonItem.at("id").get<unsigned short int>();
+        currentStudent.mName = currentJsonItem.at("name").get<string>();
+        currentStudent.mHasAccommodations = currentJsonItem.at("hasAccommodations").get<bool>();
+        currentStudent.mEffectivePresentationLength = currentStudent.mHasAccommodations ? GLOBAL_CONFIG.ACCOMMODATED_PRESENTATION_LENGTH : GLOBAL_CONFIG.NORMAL_PRESENTATION_LENGTH;
+        currentStudent.mReferentTeacherId = currentJsonItem.at("referentTeacherId").get<unsigned short int>();
+        currentStudent.mTutorId = currentJsonItem.at("tutorId").get<unsigned short int>();
+
+        students.push_back(currentStudent);
+    }
+
+    return students;
+}
+
 
 string Utils::minutesToHHMM(const unsigned short int pMinutes)
 {
