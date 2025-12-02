@@ -9,7 +9,7 @@ Teacher::Teacher(const unsigned short int pId, string pName, const bool pIsTechn
 
 bool Teacher::isAvailable(const unsigned short int pDay, const Utils::Interval pSlot)
 {
-    if (this->mWeeklyRemainingMinutes < (pSlot.mEnd - pSlot.mStart)) return false;
+    if (this->mWeeklyRemainingMinutes < pSlot.mEnd - pSlot.mStart) return false;
 
     if (pDay >= static_cast<unsigned short int>(this->mBusyByDay.size())) this->mBusyByDay.resize(pDay+1);
 

@@ -29,13 +29,13 @@ void Scheduler::ensureDayCapacity(const unsigned short int pDay) {
 // Try to schedule all students with greedy earliest-fit, it creates additional days if needed.
 bool Scheduler::scheduleAll()
 {
-    unsigned short int day = 0;
+    const unsigned short int day = 0;
     ensureDayCapacity(day);
 
     // Order students sorted by accommodated length descending (longer first helps greedy, and sort helps algorithm)
     vector<unsigned short int> order(this->mStudents.size());
     iota(order.begin(), order.end(), 0);
-    sort(order.begin(), order.end(), [&](unsigned short int studentIdOne, unsigned short int studentIdTwo) {
+    sort(order.begin(), order.end(), [&](const unsigned short int studentIdOne, const unsigned short int studentIdTwo) {
             return this->mStudents[studentIdOne].mEffectivePresentationLength > this->mStudents[studentIdTwo].mEffectivePresentationLength;
         }
     );
@@ -101,7 +101,7 @@ bool Scheduler::scheduleAll()
 }
 
 // Check participants availability and constraints for the given student, day, slot, room
-bool Scheduler::canPlace(const Student &pStudent, unsigned short int pDay, const Utils::Interval &pSlot)
+bool Scheduler::canPlace(const Student &pStudent, const unsigned short int pDay, const Utils::Interval &pSlot)
 {
     // Referent teacher must be available
     Teacher &studentReferentTeacher = this->mTeachers[pStudent.mReferentTeacherId];
@@ -129,14 +129,14 @@ bool Scheduler::canPlace(const Student &pStudent, unsigned short int pDay, const
 }
 
 // Place the presentation: pick a specific second teacher (random among valid), book everything, advance room pointer
-void Scheduler::place(const Student &pStudent, unsigned short int pDay, const Utils::Interval &pSlot, unsigned short int pRoomId)
+void Scheduler::place(const Student &pStudent, const unsigned short int pDay, const Utils::Interval &pSlot, const unsigned short int pRoomId)
 {
     Teacher &studentReferentTeacher = this->mTeachers[pStudent.mReferentTeacherId];
     Tutor &studentTutor = this->mTutors[pStudent.mTutorId];
 
     // Select second teacher candidates
     vector<unsigned short int> secondTeacherCandidates;
-    bool needTechnicalSecond = !studentReferentTeacher.mIsTechnical;
+    const bool needTechnicalSecond = !studentReferentTeacher.mIsTechnical;
     for(unsigned short int currentTeacherId=0; currentTeacherId<static_cast<unsigned short int>(this->mTeachers.size()); ++currentTeacherId)
     {
         if (currentTeacherId == studentReferentTeacher.mId) continue;

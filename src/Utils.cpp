@@ -175,10 +175,10 @@ void Utils::printParameters()
     cout << endl;
 
     cout << "Times:" << endl;
-    cout << "\tStart morning time: " << Utils::minutesToHHMM(GLOBAL_CONFIG.START_MORNING_TIME) << endl;
-    cout << "\tEnd morning time: " << Utils::minutesToHHMM(GLOBAL_CONFIG.END_MORNING_TIME) << endl;
-    cout << "\tStart afternoon time: " << Utils::minutesToHHMM(GLOBAL_CONFIG.START_AFTERNOON_TIME) << endl;
-    cout << "\tEnd afternoon time: " << Utils::minutesToHHMM(GLOBAL_CONFIG.END_AFTERNOON_TIME) << endl;
+    cout << "\tStart morning time: " << minutesToHHMM(GLOBAL_CONFIG.START_MORNING_TIME) << endl;
+    cout << "\tEnd morning time: " << minutesToHHMM(GLOBAL_CONFIG.END_MORNING_TIME) << endl;
+    cout << "\tStart afternoon time: " << minutesToHHMM(GLOBAL_CONFIG.START_AFTERNOON_TIME) << endl;
+    cout << "\tEnd afternoon time: " << minutesToHHMM(GLOBAL_CONFIG.END_AFTERNOON_TIME) << endl;
 
     cout << endl;
 }
