@@ -3,14 +3,14 @@
 
 struct Presentation
 {
-    unsigned short int studentId;
-    unsigned short int day; // 0-based
-    unsigned short int roomId;
-    unsigned short int startMinute; // Minutes from midnight
-    unsigned short int duration; // Presentation duration only (excluding breaks)
-    unsigned short int referentTeacherId;
-    unsigned short int secondTeacherId;
-    unsigned short int tutorId;
+    unsigned short int mStudentId;
+    unsigned short int mDay; // 0-based
+    unsigned short int mRoomId;
+    unsigned short int mStartMinute; // Minutes from midnight
+    unsigned short int mDuration; // Presentation duration only (excluding breaks)
+    unsigned short int mReferentTeacherId;
+    unsigned short int mSecondTeacherId;
+    unsigned short int mTutorId;
 };
 
 #endif

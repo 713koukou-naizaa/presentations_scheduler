@@ -163,14 +163,14 @@ void Scheduler::place(const Student &pStudent, const unsigned short int pDay, co
 
     // Record assignment as presentation
     Presentation finalPresentation{};
-    finalPresentation.studentId = pStudent.mId;
-    finalPresentation.day = pDay;
-    finalPresentation.roomId = pRoomId;
-    finalPresentation.startMinute = pSlot.mStart;
-    finalPresentation.duration = pSlot.mEnd - pSlot.mStart;
-    finalPresentation.referentTeacherId = studentReferentTeacher.mId;
-    finalPresentation.secondTeacherId = secondTeacherId;
-    finalPresentation.tutorId = pStudent.mTutorId;
+    finalPresentation.mStudentId = pStudent.mId;
+    finalPresentation.mDay = pDay;
+    finalPresentation.mRoomId = pRoomId;
+    finalPresentation.mStartMinute = pSlot.mStart;
+    finalPresentation.mDuration = pSlot.mEnd - pSlot.mStart;
+    finalPresentation.mReferentTeacherId = studentReferentTeacher.mId;
+    finalPresentation.mSecondTeacherId = secondTeacherId;
+    finalPresentation.mTutorId = pStudent.mTutorId;
     this->mAssignments.push_back(finalPresentation);
 
     // Advance room pointer for that day: add presentation time + break
@@ -194,21 +194,21 @@ void Scheduler::printSchedule()
 {
     // Sort assignments by day, start time
     sort(this->mAssignments.begin(), this->mAssignments.end(), [](const Presentation &assignmentOne, const Presentation &assignmentTwo) {
-        if (assignmentOne.day != assignmentTwo.day) return assignmentOne.day < assignmentTwo.day;
-        if (assignmentOne.startMinute != assignmentTwo.startMinute) return assignmentOne.startMinute < assignmentTwo.startMinute;
-        return assignmentOne.roomId < assignmentTwo.roomId;
+        if (assignmentOne.mDay != assignmentTwo.mDay) return assignmentOne.mDay < assignmentTwo.mDay;
+        if (assignmentOne.mStartMinute != assignmentTwo.mStartMinute) return assignmentOne.mStartMinute < assignmentTwo.mStartMinute;
+        return assignmentOne.mRoomId < assignmentTwo.mRoomId;
     });
 
     cout << "Full schedule (" << this->mAssignments.size() << " presentations):\n";
     for(auto &currentAssignment : this->mAssignments)
     {
-        const Student &concernedStudent = this->mStudents[currentAssignment.studentId];
-        const Teacher &concernedReferentTeacher = this->mTeachers[currentAssignment.referentTeacherId];
-        const Teacher &concernedSecondTeacher = this->mTeachers[currentAssignment.secondTeacherId];
-        const Tutor &concernedTutor = this->mTutors[currentAssignment.tutorId];
-        cout << "Day " << currentAssignment.day+1 << " | " << Utils::minutesToHHMM(currentAssignment.startMinute) << " - "
-                << Utils::minutesToHHMM(currentAssignment.startMinute + currentAssignment.duration) << " (" << currentAssignment.duration << " mins)" 
-                << " | Room " << mRooms[currentAssignment.roomId].mTag
+        const Student &concernedStudent = this->mStudents[currentAssignment.mStudentId];
+        const Teacher &concernedReferentTeacher = this->mTeachers[currentAssignment.mReferentTeacherId];
+        const Teacher &concernedSecondTeacher = this->mTeachers[currentAssignment.mSecondTeacherId];
+        const Tutor &concernedTutor = this->mTutors[currentAssignment.mTutorId];
+        cout << "Day " << currentAssignment.mDay+1 << " | " << Utils::minutesToHHMM(currentAssignment.mStartMinute) << " - "
+                << Utils::minutesToHHMM(currentAssignment.mStartMinute + currentAssignment.mDuration) << " (" << currentAssignment.mDuration << " mins)"
+                << " | Room " << mRooms[currentAssignment.mRoomId].mTag
                 << " | Student: " << concernedStudent.mName
                 << " | Referent: " << concernedReferentTeacher.mName << (concernedReferentTeacher.mIsTechnical ? " Tech" : "\t")
                 << " | Second: " << concernedSecondTeacher.mName << (concernedSecondTeacher.mIsTechnical ? " Tech\t" : "\t\t")
