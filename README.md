@@ -1,11 +1,13 @@
 # Presentations Scheduler
 
-A C++ scheduling component developed for the university web project `Gestion de suivi des stages` (see [GitHub repository link](https://github.com/nzoEtd/suivi-stage)) during my third year of my computer science bachelor's degree (BUT Informatique). The scheduler implements a greedy scheduling algorithm (see [Algorithm outline markdown file](docs/algorithm_outlines.md)) and is designed to be invoked from PHP for web integration. The implementation favors compiled C++ for runtime performance and reduced energy consumption.
+A C++ scheduling component developed for the university web project `Gestion de suivi des stages` (see [GitHub repository link](https://github.com/nzoEtd/suivi-stage)) during my third year of my computer science bachelor's degree (BUT Informatique). The scheduler implements a greedy scheduling algorithm (see [Algorithm outline Markdown file](docs/algorithm_outlines.md)) and is designed to be invoked from PHP for web integration. The implementation favors compiled C++ for runtime performance and reduced energy consumption.
 
 ## Highlights
 - Implemented in modern C++ for speed and low runtime overhead.
 - Intended to be called from a PHP web backend.
 - Includes a greedy scheduling algorithm and utilities for rooms, teachers, tutors and students.
+- Reads data from JSON files.
+- Returns the output as JSON files.
 
 ## Generate dummy JSON data
 The [generateDummyJsonData.py](generateDummyJsonData.py) file generates dummy JSON data for teachers, tutors, students and rooms.
@@ -54,7 +56,7 @@ chmod +x simulate_prod_run.sh
 - `bin` - compiled binary output
 - `docs` documentations (algorithm outline, related documentation, ...)
 - `include/` - public headers (`config.h`, `json.hpp`, `Presentation.h`, `Room.h`, `Scheduler.h`, `Student.h`, `Teacher.h`, `Tutor.h`, `Utils.h`)
-- `json` - JSON files (`teachers.json`, `tutors.json`, `students.json`, `rooms.json`), created after dummy data generation
+- `json` - JSON files (`teachers.json`, `tutors.json`, `students.json`, `rooms.json` created after dummy data generation, `planning.json`, `salles.json`, `soutenances.json` created after algorithm execution)
 - `src/` — implementation files (`Room.cpp`, `Scheduler.cpp`, `Teacher.cpp`, `Tutor.cpp`, `Utils.cpp`)
 - `.gitignore` - git ignore file
 - `download_bin.sh` - download binary file example
