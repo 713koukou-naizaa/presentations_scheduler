@@ -50,6 +50,7 @@ string Utils::loadFileToString(const string &pFilePath)
 
     std::stringstream buffer;
     buffer << pFileStream.rdbuf();
+    pFileStream.close();
     return buffer.str();
 }
 
