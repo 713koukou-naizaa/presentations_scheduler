@@ -7,7 +7,7 @@ A C++ scheduling component developed for the university web project `Gestion de 
 - Intended to be called from a PHP web backend.
 - Includes a greedy scheduling algorithm and utilities for rooms, teachers, tutors and students.
 - Reads data from JSON files.
-- Returns the output as JSON files.
+- Returns the output as JSON file.
 
 ## Generate dummy JSON data
 The [generateDummyJsonData.py](generateDummyJsonData.py) file generates dummy JSON data for teachers, tutors, students and rooms.
@@ -29,7 +29,7 @@ chmod +x bin/presentations_scheduler
 ```
 
 ## Integration with PHP
-Use `exec`, `shell_exec` or `proc_open` to call [run.sh](run.sh) or directly `bin/main` from PHP and capture stdout/stderr. See the [prod_web_launcher.php](prod_web_launcher.php) file using exec as an example.
+Use `exec`, `shell_exec` or `proc_open` to call directly `bin/main` from PHP and capture stdout/stderr. See the [prod_web_launcher.php](prod_web_launcher.php) file using exec as an example.
 
 ```bash
 chmod +x prod_web_launcher.php
@@ -65,24 +65,10 @@ chmod +x simulate_prod_run.sh
 - `main.cpp` - program entry point
 - `prod_web_launcher.php` - simulated php production run script
 - `README.md` - this file
-- `run.sh` - run the binary file
 - `simulate_dev_run.sh` - simulate a development run (make using Makefile, run php web launcher, run binary file)
 - `simulate_prod_run.sh` - simulate a production run script (run php web launcher, run binary file)
 
 ## Notes
 - The binary is intended to be light-weight and fast; prefer invoking it as an external process from the PHP web app rather than embedding heavy runtimes.
 - Check `docs/algorithm_outlines.md` and `docs/greedy_scheduling_algorithm_algoforge.json` for algorithm details and rationale.
-- To ensure the binary file has all the librairies it needs to run once on the server, it is good practice to compile the code statically. For this, modify the `Makefile`:
-```makefile
-CXX = g++
-CXXFLAGS = -Wall -std=c++17 -Iinclude
-LDFLAGS = -static -static-libgcc -static-libstdc++
-SRC = main.cpp src/Scheduler.cpp src/Teacher.cpp src/Tutor.cpp src/Room.cpp src/Utils.cpp
-OUT = bin/main
-
-all:
-	mkdir -p bin
-	$(CXX) $(CXXFLAGS) $(SRC) -o $(OUT) $(LDFLAGS)
-clean:
-	rm -f bin/main
-```
+- The code is compiled the code statically to ensure the binary file has all the libraries it needs to run once on the server.

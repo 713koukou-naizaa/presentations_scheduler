@@ -3,6 +3,7 @@
 #include <bits/stdc++.h>
 #include <iostream>
 #include <stdexcept>
+#include <fstream>
 
 using namespace std;
 
@@ -216,3 +217,43 @@ void Scheduler::printSchedule()
                 << "\n";
     }
 }
+
+// Output final schedule to a JSON file
+void Scheduler::outputJSONResult() const
+{
+    nlohmann::json schedule = nlohmann::json::array();
+
+    for (const auto &currentAssignment : this->mAssignments)
+    {
+        const Student &student = this->mStudents[currentAssignment.mStudentId];
+        const Teacher &referent_teacher = this->mTeachers[currentAssignment.mReferentTeacherId];
+        const Teacher &second_teacher = this->mTeachers[currentAssignment.mSecondTeacherId];
+        const Tutor &tutor = this->mTutors[currentAssignment.mTutorId];
+        const Room &room = this->mRooms[currentAssignment.mRoomId];
+
+        const unsigned short int startTime = currentAssignment.mStartMinute;
+        const unsigned short int endTime = currentAssignment.mStartMinute + currentAssignment.mDuration;
+
+        nlohmann::json obj = {
+            {"day_number",  currentAssignment.mDay},
+            {"start_time", startTime},
+            {"end_time", endTime},
+            {"duration", currentAssignment.mDuration},
+            {"room_id", room.mId},
+            {"student_id", student.mId},
+            {"referent_id", referent_teacher.mId},
+            {"referent_is_technical", referent_teacher.mIsTechnical},
+            {"second_teacher_id", second_teacher.mId},
+            {"second_teacher_is_technical", second_teacher.mIsTechnical},
+            {"tutor_id", tutor.mId}
+        };
+
+        schedule.push_back(obj);
+    }
+
+    const std::string outPath = GLOBAL_CONFIG.JSON_DIR_PATH + "/schedule.json";
+    std::ofstream ofsSchedule(outPath, std::ios::trunc);
+    if (!ofsSchedule.is_open()) { std::cerr << "Failed to write `schedule.json`\n"; }
+    else { ofsSchedule << schedule.dump(4); ofsSchedule.close(); }
+}
+

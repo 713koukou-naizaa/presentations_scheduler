@@ -42,6 +42,9 @@ struct Scheduler
 
     // Print final schedule
     void printSchedule();
+
+    // Output final schedule to a JSON file
+    void outputJSONResult() const;
 };
 
 #endif

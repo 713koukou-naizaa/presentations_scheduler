@@ -62,59 +62,7 @@ int main(const int argc, char* argv[])
 
     //schedule.printSchedule();
 
-    // Build planning summary (single object)
-    unsigned short jsonJourFinNumero = 0;
-    for (const auto &a : schedule.mAssignments) if (a.mDay > jsonJourFinNumero) jsonJourFinNumero = a.mDay;
-    unsigned short jsonHeureDebutMatin = GLOBAL_CONFIG.START_MORNING_TIME;
-    unsigned short jsonHeureFinMatin   = GLOBAL_CONFIG.END_MORNING_TIME;
-    unsigned short jsonHeureDebutAprem = GLOBAL_CONFIG.START_AFTERNOON_TIME;
-    unsigned short jsonHeureFinAprem   = GLOBAL_CONFIG.END_AFTERNOON_TIME;
-    unsigned short jsonDureeSoutenance = GLOBAL_CONFIG.NORMAL_PRESENTATION_LENGTH;
-
-    nlohmann::json planning = nlohmann::json::array();
-    planning.push_back(nlohmann::json{
-        {"jourFinNumero", jsonJourFinNumero},
-        {"heureDebutMatin", jsonHeureDebutMatin},
-        {"heureFinMatin", jsonHeureFinMatin},
-        {"heureDebutAprem", jsonHeureDebutAprem},
-        {"heureFinAprem", jsonHeureFinAprem},
-        {"dureeSoutenance", jsonDureeSoutenance}
-    });
-
-    std::ofstream ofsPlanning(GLOBAL_CONFIG.JSON_DIR_PATH + "/planning.json", std::ios::trunc);
-    if (!ofsPlanning.is_open()) std::cerr << "Failed to write `planning.json`\n";
-    else { ofsPlanning << planning.dump(4); ofsPlanning.close(); }
-
-    // Build soutenances (one object per assignment)
-    nlohmann::json soutenances = nlohmann::json::array();
-    for (const auto &a : schedule.mAssignments)
-    {
-        soutenances.push_back(nlohmann::json{
-            {"jourNumero", a.mDay},
-            {"heureDebut", a.mStartMinute},
-            {"heureFin", static_cast<unsigned short>(a.mStartMinute + a.mDuration)},
-            {"nomSalle", schedule.mRooms[a.mRoomId].mTag},
-            {"idLecteur", a.mSecondTeacherId}
-        });
-    }
-
-    std::ofstream ofsSout(GLOBAL_CONFIG.JSON_DIR_PATH + "/soutenances.json", std::ios::trunc);
-    if (!ofsSout.is_open()) std::cerr << "Failed to write `soutenances.json`\n";
-    else { ofsSout << soutenances.dump(4); ofsSout.close(); }
-
-    // Build salles (one object per assignment)
-    nlohmann::json salles = nlohmann::json::array();
-    for (const auto &a : schedule.mAssignments)
-    {
-        salles.push_back(nlohmann::json{
-            {"nomSalle", schedule.mRooms[a.mRoomId].mTag},
-            {"estDisponible", true}
-        });
-    }
-
-    std::ofstream ofsSalles(GLOBAL_CONFIG.JSON_DIR_PATH + "/salles.json", std::ios::trunc);
-    if (!ofsSalles.is_open()) std::cerr << "Failed to write `salles.json`\n";
-    else { ofsSalles << salles.dump(4); ofsSalles.close(); }
+    schedule.outputJSONResult();
     
     return 0;
 }

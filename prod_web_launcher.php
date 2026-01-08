@@ -18,7 +18,23 @@ $maxTeachersWeeklyWorkedTime = $maxTeachersWeeklyWorkedHours * 60;
 
 $jsonDirPath = "./json";
 
-$cmd = "./run.sh $startMorningTime $endMorningTime $startAfternoonTime $endAfternoonTime $normalPresentationLength $accommodatedPresentationLength $inBetweenBreakLength $maxTeachersWeeklyWorkedTime $jsonDirPath";
+$binaryFile = './bin/main';
+
+$args = [
+    $startMorningTime,
+    $endMorningTime,
+    $startAfternoonTime,
+    $endAfternoonTime,
+    $normalPresentationLength,
+    $accommodatedPresentationLength,
+    $inBetweenBreakLength,
+    $maxTeachersWeeklyWorkedTime,
+    $jsonDirPath
+];
+
+$cmd = $binaryFile . " " . implode(" ", $args);
+
+echo "Executing:" . $cmd;
 
 exec($cmd, $output, $status);
 
