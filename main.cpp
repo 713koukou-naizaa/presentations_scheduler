@@ -14,9 +14,9 @@ Config GLOBAL_CONFIG;
 
 int main(const int argc, char* argv[])
 {
-    if (argc != 9)
+    if (argc != 10)
     {
-        std::cerr << "Usage: " << argv[0] << " <start_morning_time> <end_morning_time> <start_afternoon_time> <end_afternoon_time> <normal_presentation_length> <accommodated_presentation_length> <in_between_break_length> <max_teachers_weekly_worked_time>\n";
+        std::cerr << "Usage: " << argv[0] << " <start_morning_time> <end_morning_time> <start_afternoon_time> <end_afternoon_time> <normal_presentation_length> <accommodated_presentation_length> <in_between_break_length> <max_teachers_weekly_worked_time> <json_dir_path>\n";
         return 1;
     }
 
@@ -32,11 +32,13 @@ int main(const int argc, char* argv[])
 
     GLOBAL_CONFIG.MAX_TEACHERS_WEEKLY_WORKED_TIME=std::stoi(argv[8]);
 
+    GLOBAL_CONFIG.JSON_DIR_PATH=argv[9];
+
     // Create teachers, tutors, students and rooms from json
-    const vector<Teacher> teachers = Utils::loadTeachersFromJson("json/teachers.json");
-    const vector<Tutor> tutors = Utils::loadTutorsFromJson("json/tutors.json");
-    const vector<Student> students = Utils::loadStudentsFromJson("json/students.json");
-    const vector<Room> rooms = Utils::loadRoomsFromJson("json/rooms.json");
+    const vector<Teacher> teachers = Utils::loadTeachersFromJson(GLOBAL_CONFIG.JSON_DIR_PATH + "/teachers.json");
+    const vector<Tutor> tutors = Utils::loadTutorsFromJson(GLOBAL_CONFIG.JSON_DIR_PATH + "/tutors.json");
+    const vector<Student> students = Utils::loadStudentsFromJson(GLOBAL_CONFIG.JSON_DIR_PATH + "/students.json");
+    const vector<Room> rooms = Utils::loadRoomsFromJson(GLOBAL_CONFIG.JSON_DIR_PATH + "/rooms.json");
 
     GLOBAL_CONFIG.NB_STUDENTS=students.size();
     GLOBAL_CONFIG.NB_TEACHERS=teachers.size();
@@ -79,7 +81,7 @@ int main(const int argc, char* argv[])
         {"dureeSoutenance", jsonDureeSoutenance}
     });
 
-    std::ofstream ofsPlanning("./json/planning.json", std::ios::trunc);
+    std::ofstream ofsPlanning(GLOBAL_CONFIG.JSON_DIR_PATH + "/planning.json", std::ios::trunc);
     if (!ofsPlanning.is_open()) std::cerr << "Failed to write `planning.json`\n";
     else { ofsPlanning << planning.dump(4); ofsPlanning.close(); }
 
@@ -96,7 +98,7 @@ int main(const int argc, char* argv[])
         });
     }
 
-    std::ofstream ofsSout("./json/soutenances.json", std::ios::trunc);
+    std::ofstream ofsSout(GLOBAL_CONFIG.JSON_DIR_PATH + "/soutenances.json", std::ios::trunc);
     if (!ofsSout.is_open()) std::cerr << "Failed to write `soutenances.json`\n";
     else { ofsSout << soutenances.dump(4); ofsSout.close(); }
 
@@ -110,7 +112,7 @@ int main(const int argc, char* argv[])
         });
     }
 
-    std::ofstream ofsSalles("./json/salles.json", std::ios::trunc);
+    std::ofstream ofsSalles(GLOBAL_CONFIG.JSON_DIR_PATH + "/salles.json", std::ios::trunc);
     if (!ofsSalles.is_open()) std::cerr << "Failed to write `salles.json`\n";
     else { ofsSalles << salles.dump(4); ofsSalles.close(); }
     

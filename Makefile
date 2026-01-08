@@ -6,3 +6,5 @@ OUT = bin/main
 all:
 	mkdir -p bin
 	$(CXX) $(CXXFLAGS) $(SRC) -o $(OUT)
+clean:
+	rm -f bin/main

@@ -1,6 +1,10 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#include <string>
+
+using std::string;
+
 struct Config
 {
     // CONSTANTS
@@ -20,6 +24,8 @@ struct Config
    unsigned short int NB_ROOMS;
 
    unsigned short int NB_TUTORS;
+
+    string JSON_DIR_PATH;
 };
 
 extern Config GLOBAL_CONFIG;

@@ -16,7 +16,9 @@ $accommodatedPresentationLength = $normalPresentationLength + 20;
 $inBetweenBreakLength = 5;
 $maxTeachersWeeklyWorkedTime = $maxTeachersWeeklyWorkedHours * 60;
 
-$cmd = "./run.sh $startMorningTime $endMorningTime $startAfternoonTime $endAfternoonTime $normalPresentationLength $accommodatedPresentationLength $inBetweenBreakLength $maxTeachersWeeklyWorkedTime";
+$jsonDirPath = "./json";
+
+$cmd = "./run.sh $startMorningTime $endMorningTime $startAfternoonTime $endAfternoonTime $normalPresentationLength $accommodatedPresentationLength $inBetweenBreakLength $maxTeachersWeeklyWorkedTime $jsonDirPath";
 
 exec($cmd, $output, $status);
 

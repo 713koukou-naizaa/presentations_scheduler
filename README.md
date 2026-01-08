@@ -72,3 +72,17 @@ chmod +x simulate_prod_run.sh
 ## Notes
 - The binary is intended to be light-weight and fast; prefer invoking it as an external process from the PHP web app rather than embedding heavy runtimes.
 - Check `docs/algorithm_outlines.md` and `docs/greedy_scheduling_algorithm_algoforge.json` for algorithm details and rationale.
+- To ensure the binary file has all the librairies it needs to run once on the server, it is good practice to compile the code statically. For this, modify the `Makefile`:
+```makefile
+CXX = g++
+CXXFLAGS = -Wall -std=c++17 -Iinclude
+LDFLAGS = -static -static-libgcc -static-libstdc++
+SRC = main.cpp src/Scheduler.cpp src/Teacher.cpp src/Tutor.cpp src/Room.cpp src/Utils.cpp
+OUT = bin/main
+
+all:
+	mkdir -p bin
+	$(CXX) $(CXXFLAGS) $(SRC) -o $(OUT) $(LDFLAGS)
+clean:
+	rm -f bin/main
+```
