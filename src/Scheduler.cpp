@@ -226,6 +226,7 @@ string Scheduler::outputJSONResult() const
     for (const auto &currentAssignment : this->mAssignments)
     {
         const Student &student = this->mStudents[currentAssignment.mStudentId];
+        const Teacher &second_teacher = this->mTeachers[currentAssignment.mSecondTeacherId];
         const Room &room = this->mRooms[currentAssignment.mRoomId];
 
         const unsigned short int startTime = currentAssignment.mStartMinute;
@@ -233,6 +234,7 @@ string Scheduler::outputJSONResult() const
 
         nlohmann::json obj = {
             {"idUPPA", student.mId},
+            {"idLecteur", second_teacher.mId},
             {"date",  currentAssignment.mDay},
             {"heureDebut", startTime},
             {"heureFin", endTime},
