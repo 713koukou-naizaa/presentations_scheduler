@@ -34,7 +34,7 @@ $args = [
 
 $cmd = $binaryFile . " " . implode(" ", $args);
 
-echo "Executing:" . $cmd;
+echo "Executing:" . $cmd . "\n";
 
 exec($cmd, $output, $status);
 

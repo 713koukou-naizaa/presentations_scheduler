@@ -62,7 +62,7 @@ int main(const int argc, char* argv[])
 
     //schedule.printSchedule();
 
-    schedule.outputJSONResult();
+    cout << schedule.outputJSONResult();
     
     return 0;
 }
