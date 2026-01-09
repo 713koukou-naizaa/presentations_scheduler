@@ -7,7 +7,6 @@
 #include "config.h"
 #include "Student.h"
 #include "Teacher.h"
-#include "Tutor.h"
 #include "Room.h"
 #include "Presentation.h"
 #include "Utils.h"
@@ -19,14 +18,13 @@ struct Scheduler
 {
     vector<Student> mStudents;
     vector<Teacher> mTeachers;
-    vector<Tutor> mTutors;
     vector<Room> mRooms;
     int mBreakLength = GLOBAL_CONFIG.IN_BETWEEN_BREAK_LENGTH;
 
     vector<Presentation> mAssignments;
 
     // Initialise scheduler with some capacity of days
-    Scheduler(vector<Student>, vector<Teacher>, vector<Tutor>, vector<Room>);
+    Scheduler(vector<Student>, vector<Teacher>, vector<Room>);
 
     // Ensure internal per-day containers are big enough
     void ensureDayCapacity(unsigned short int);
@@ -44,7 +42,7 @@ struct Scheduler
     void printSchedule();
 
     // Output final schedule to a JSON file
-    string outputJSONResult() const;
+    [[ nodiscard ]] string outputJSONResult() const;
 };
 
 #endif

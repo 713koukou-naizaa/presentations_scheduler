@@ -10,7 +10,7 @@ using namespace std;
 using std::cout;
 using std::endl;
 
-Scheduler::Scheduler(vector<Student> pStudents, vector<Teacher> pTeachers, vector<Tutor> pTutors, vector<Room> pRooms) : mStudents(std::move(pStudents)), mTeachers(std::move(pTeachers)), mTutors(std::move(pTutors)), mRooms(std::move(pRooms)) {}
+Scheduler::Scheduler(vector<Student> pStudents, vector<Teacher> pTeachers, vector<Room> pRooms) : mStudents(std::move(pStudents)), mTeachers(std::move(pTeachers)), mRooms(std::move(pRooms)) {}
 
 // Ensure internal per-day containers are big enough
 void Scheduler::ensureDayCapacity(const unsigned short int pDay) {
@@ -24,7 +24,6 @@ void Scheduler::ensureDayCapacity(const unsigned short int pDay) {
     }
 
     for(auto &currentTeacher : this->mTeachers) { if (static_cast<unsigned short int>(currentTeacher.mBusyByDay.size()) <= pDay) currentTeacher.mBusyByDay.resize(pDay+1); }
-    for(auto &currentTutor : this->mTutors) { if (static_cast<unsigned short int>(currentTutor.mBusyByDay.size()) <= pDay) currentTutor.mBusyByDay.resize(pDay+1); }
 }
 
 // Try to schedule all students with greedy earliest-fit, it creates additional days if needed.
@@ -133,7 +132,6 @@ bool Scheduler::canPlace(const Student &pStudent, const unsigned short int pDay,
 void Scheduler::place(const Student &pStudent, const unsigned short int pDay, const Utils::Interval &pSlot, const unsigned short int pRoomId)
 {
     Teacher &studentReferentTeacher = this->mTeachers[pStudent.mReferentTeacherId];
-    Tutor &studentTutor = this->mTutors[pStudent.mTutorId];
 
     // Select second teacher candidates
     vector<unsigned short int> secondTeacherCandidates;
@@ -157,10 +155,9 @@ void Scheduler::place(const Student &pStudent, const unsigned short int pDay, co
     shuffle(secondTeacherCandidates.begin(), secondTeacherCandidates.end(), rng);
     const unsigned short int secondTeacherId = secondTeacherCandidates[0];
 
-    // Book referent, second teacher, and tutor
+    // Book referent, second teacher
     studentReferentTeacher.book(pDay, pSlot);
     this->mTeachers[secondTeacherId].book(pDay, pSlot);
-    studentTutor.book(pDay, pSlot);
 
     // Record assignment as presentation
     Presentation finalPresentation{};
@@ -171,7 +168,6 @@ void Scheduler::place(const Student &pStudent, const unsigned short int pDay, co
     finalPresentation.mDuration = pSlot.mEnd - pSlot.mStart;
     finalPresentation.mReferentTeacherId = studentReferentTeacher.mId;
     finalPresentation.mSecondTeacherId = secondTeacherId;
-    finalPresentation.mTutorId = pStudent.mTutorId;
     this->mAssignments.push_back(finalPresentation);
 
     // Advance room pointer for that day: add presentation time + break
@@ -206,14 +202,12 @@ void Scheduler::printSchedule()
         const Student &concernedStudent = this->mStudents[currentAssignment.mStudentId];
         const Teacher &concernedReferentTeacher = this->mTeachers[currentAssignment.mReferentTeacherId];
         const Teacher &concernedSecondTeacher = this->mTeachers[currentAssignment.mSecondTeacherId];
-        const Tutor &concernedTutor = this->mTutors[currentAssignment.mTutorId];
         cout << "Day " << currentAssignment.mDay+1 << " | " << Utils::minutesToHHMM(currentAssignment.mStartMinute) << " - "
                 << Utils::minutesToHHMM(currentAssignment.mStartMinute + currentAssignment.mDuration) << " (" << currentAssignment.mDuration << " mins)"
                 << " | Room " << mRooms[currentAssignment.mRoomId].mTag
                 << " | Student: " << concernedStudent.mName
                 << " | Referent: " << concernedReferentTeacher.mName << (concernedReferentTeacher.mIsTechnical ? " Tech" : "\t")
                 << " | Second: " << concernedSecondTeacher.mName << (concernedSecondTeacher.mIsTechnical ? " Tech\t" : "\t\t")
-                << " | Tutor: " << concernedTutor.mName
                 << "\n";
     }
 }

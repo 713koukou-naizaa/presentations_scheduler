@@ -3,7 +3,6 @@
 #include "config.h"
 #include "Utils.h"
 #include "Teacher.h"
-#include "Tutor.h"
 #include "Student.h"
 #include "Room.h"
 #include "Scheduler.h"
@@ -14,9 +13,9 @@ Config GLOBAL_CONFIG;
 
 int main(const int argc, char* argv[])
 {
-    if (argc != 10)
+    if (argc != 9)
     {
-        std::cerr << "Usage: " << argv[0] << " <start_morning_time> <end_morning_time> <start_afternoon_time> <end_afternoon_time> <normal_presentation_length> <accommodated_presentation_length> <in_between_break_length> <max_teachers_weekly_worked_time> <json_dir_path>\n";
+        std::cerr << "Usage: " << argv[0] << " <start_morning_time> <end_morning_time> <start_afternoon_time> <end_afternoon_time> <normal_presentation_length> <accommodated_presentation_length> <in_between_break_length> <max_teachers_weekly_worked_time>\n";
         return 1;
     }
 
@@ -32,23 +31,19 @@ int main(const int argc, char* argv[])
 
     GLOBAL_CONFIG.MAX_TEACHERS_WEEKLY_WORKED_TIME=std::stoi(argv[8]);
 
-    GLOBAL_CONFIG.JSON_DIR_PATH=argv[9];
-
-    // Create teachers, tutors, students and rooms from json
-    const vector<Teacher> teachers = Utils::loadTeachersFromJson(GLOBAL_CONFIG.JSON_DIR_PATH + "/teachers.json");
-    const vector<Tutor> tutors = Utils::loadTutorsFromJson(GLOBAL_CONFIG.JSON_DIR_PATH + "/tutors.json");
-    const vector<Student> students = Utils::loadStudentsFromJson(GLOBAL_CONFIG.JSON_DIR_PATH + "/students.json");
-    const vector<Room> rooms = Utils::loadRoomsFromJson(GLOBAL_CONFIG.JSON_DIR_PATH + "/rooms.json");
+    // Create students, teachers and rooms from stdin JSON
+    const vector<Student> students = Utils::loadStudentsFromStdin();
+    const vector<Teacher> teachers = Utils::loadTeachersFromStdin();
+    const vector<Room> rooms = Utils::loadRoomsFromStdin();
 
     GLOBAL_CONFIG.NB_STUDENTS=students.size();
     GLOBAL_CONFIG.NB_TEACHERS=teachers.size();
     GLOBAL_CONFIG.NB_ROOMS=rooms.size();
-    GLOBAL_CONFIG.NB_TUTORS=tutors.size();
 
     //Utils::displayVectors(students, teachers, tutors, rooms);
 
     // Create scheduler
-    Scheduler schedule(students, teachers, tutors, rooms);
+    Scheduler schedule(students, teachers, rooms);
 
     bool schedulingState = schedule.scheduleAll();
 

@@ -5,7 +5,6 @@
 #include <vector>
 
 struct Teacher;
-struct Tutor;
 struct Room;
 struct Student;
 
@@ -16,13 +15,13 @@ using std::vector;
 
 struct Utils
 {
-    static void displayVectors(const vector<Student> &, const vector<Teacher> &, const vector<Tutor> &, const vector<Room> &);
+    static void displayVectors(const vector<Student> &, const vector<Teacher> &, const vector<Room> &);
     static string loadFileToString(const string &);
 
-    static vector<Teacher> loadTeachersFromJson(const string &);
-    static vector<Tutor> loadTutorsFromJson(const string &);
-    static vector<Room> loadRoomsFromJson(const string &);
-    static vector<Student> loadStudentsFromJson(const string &);
+    static nlohmann::json readNextJsonFromStdin();
+    static vector<Student> loadStudentsFromStdin();
+    static vector<Teacher> loadTeachersFromStdin();
+    static vector<Room> loadRoomsFromStdin();
 
     static string minutesToHHMM(unsigned short int);
 

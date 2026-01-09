@@ -10,7 +10,6 @@ struct Presentation
     unsigned short int mDuration; // Presentation duration only (excluding breaks)
     unsigned short int mReferentTeacherId;
     unsigned short int mSecondTeacherId;
-    unsigned short int mTutorId;
 };
 
 #endif

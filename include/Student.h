@@ -12,7 +12,6 @@ struct Student
     bool mHasAccommodations;
     unsigned short int mEffectivePresentationLength;
     unsigned short int mReferentTeacherId;
-    unsigned short int mTutorId;
 };
 
 #endif

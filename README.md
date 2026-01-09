@@ -5,20 +5,15 @@ A C++ scheduling component developed for the university web project `Gestion de 
 ## Highlights
 - Implemented in modern C++ for speed and low runtime overhead.
 - Intended to be called from a PHP web backend.
-- Includes a greedy scheduling algorithm and utilities for rooms, teachers, tutors and students.
-- Reads data from JSON files.
-- Returns the output as JSON file.
+- Includes a greedy scheduling algorithm and utilities for rooms, teachers and students.
+- Reads data from stdin.
+- Returns the output into stdout.
 
 ## Generate dummy JSON data
-The [generateDummyJsonData.py](generateDummyJsonData.py) file generates dummy JSON data for teachers, tutors, students and rooms.
-
-```bash
-chmod +x generateDummyJsonData.py
-python generateDummyJsonData.py
-```
+Methods in the [prod_web_launcher.php](prod_web_launcher.php) file generates dummy JSON data for teachers, students and rooms.
 
 ## Use releases to deploy binary
-If only the binary file is going to be run, you can download it from the releases page, here is an example (replace <verion> with the latest one (i.e. v1.0.1)).
+If only the binary file is going to be run, you can download it from the releases page, here is an example (replace <version> with the latest one (i.e. v1.0.1)).
 
 ```bash
 #!/bin/bash
@@ -55,12 +50,11 @@ chmod +x simulate_prod_run.sh
 ## Project structure
 - `bin` - compiled binary output
 - `docs` documentations (algorithm outline, related documentation, ...)
-- `include/` - public headers (`config.h`, `json.hpp`, `Presentation.h`, `Room.h`, `Scheduler.h`, `Student.h`, `Teacher.h`, `Tutor.h`, `Utils.h`)
-- `json` - JSON files (`teachers.json`, `tutors.json`, `students.json`, `rooms.json` created after dummy data generation, `planning.json`, `salles.json`, `soutenances.json` created after algorithm execution)
-- `src/` — implementation files (`Room.cpp`, `Scheduler.cpp`, `Teacher.cpp`, `Tutor.cpp`, `Utils.cpp`)
+- `include/` - public headers (`config.h`, `json.hpp`, `Presentation.h`, `Room.h`, `Scheduler.h`, `Student.h`, `Teacher.h`, `Utils.h`)
+- `json` - JSON files (`teachers.json`, `students.json`, `rooms.json` created after dummy data generation, `planning.json`, `salles.json`, `soutenances.json` created after algorithm execution)
+- `src/` — implementation files (`Room.cpp`, `Scheduler.cpp`, `Teacher.cpp`, `Utils.cpp`)
 - `.gitignore` - git ignore file
 - `download_bin.sh` - download binary file example
-- `generateDummyJsonData.py` - generate dummy JSON data
 - `Makefile` - build rules
 - `main.cpp` - program entry point
 - `prod_web_launcher.php` - simulated php production run script
@@ -72,3 +66,5 @@ chmod +x simulate_prod_run.sh
 - The binary is intended to be light-weight and fast; prefer invoking it as an external process from the PHP web app rather than embedding heavy runtimes.
 - Check `docs/algorithm_outlines.md` and `docs/greedy_scheduling_algorithm_algoforge.json` for algorithm details and rationale.
 - The code is compiled the code statically to ensure the binary file has all the libraries it needs to run once on the server.
+- The binary file reads JSON formatted input data from stdin and sends JSON formatted output data to stdout
+- The JSON data have to be sent into stdin in the order used in [prod_web_launcher.php](prod_web_launcher.php).

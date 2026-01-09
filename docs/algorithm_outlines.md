@@ -17,7 +17,6 @@ Une version graphique a également été faite à l'aide d'[AlgoForge](https://a
 #### Get base data
 
 1. Get all teachers.
-2. Get all tutors.
 3. Get all students.
 4. Get all rooms.
 
@@ -46,7 +45,6 @@ Une version graphique a également été faite à l'aide d'[AlgoForge](https://a
 
 1. Check rooms (morning and afternoon pointers)
 2. Check teachers (busy slots per day)
-3. Check tutors (busy slots per day)
 
 #### Try morning/afternoon slot
 
@@ -58,7 +56,7 @@ Une version graphique a également été faite à l'aide d'[AlgoForge](https://a
 #### Place the student
 
 1. Select a second teacher.
-2. Reserve referent teacher, second teacher, and tutor.
+2. Reserve referent teacher, second teacher.
 3. Record the presentation assignment.
 4. Advance the room’s morning/afternoon pointer.
 

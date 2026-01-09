@@ -22,10 +22,6 @@ struct Config
    unsigned short int NB_STUDENTS;
    unsigned short int NB_TEACHERS;
    unsigned short int NB_ROOMS;
-
-   unsigned short int NB_TUTORS;
-
-    string JSON_DIR_PATH;
 };
 
 extern Config GLOBAL_CONFIG;
