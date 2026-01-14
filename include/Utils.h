@@ -16,9 +16,9 @@ using std::vector;
 struct Utils
 {
     static void displayVectors(const vector<Student> &, const vector<Teacher> &, const vector<Room> &);
-    static string loadFileToString(const string &);
 
     static nlohmann::json readNextJsonFromStdin();
+
     static vector<Student> loadStudentsFromStdin();
     static vector<Teacher> loadTeachersFromStdin();
     static vector<Room> loadRoomsFromStdin();
@@ -31,7 +31,7 @@ struct Utils
     {
         unsigned short int mStart; // inclusive minutes from midnight
         unsigned short int mEnd; // exclusive minutes
-        bool overlaps(const Interval &) const;
+        [[nodiscard]] bool overlaps(const Interval &) const;
     };
 };
 

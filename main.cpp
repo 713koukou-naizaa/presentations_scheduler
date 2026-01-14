@@ -45,9 +45,7 @@ int main(const int argc, char* argv[])
     // Create scheduler
     Scheduler schedule(students, teachers, rooms);
 
-    bool schedulingState = schedule.scheduleAll();
-
-    if (!schedulingState)
+    if (const bool schedulingState = schedule.scheduleAll(); !schedulingState)
     {
         std::cerr << "Scheduling failed.\n";
         return 1;

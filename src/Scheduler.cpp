@@ -3,7 +3,6 @@
 #include <bits/stdc++.h>
 #include <iostream>
 #include <stdexcept>
-#include <fstream>
 
 using namespace std;
 
@@ -29,7 +28,7 @@ void Scheduler::ensureDayCapacity(const unsigned short int pDay) {
 // Try to schedule all students with greedy earliest-fit, it creates additional days if needed.
 bool Scheduler::scheduleAll()
 {
-    const unsigned short int day = 0;
+    constexpr unsigned short int day = 0;
     ensureDayCapacity(day);
 
     // Order students sorted by accommodated length descending (longer first helps greedy, and sort helps algorithm)
@@ -64,9 +63,7 @@ bool Scheduler::scheduleAll()
                 unsigned short int end = start + duration;
                 if (end <= GLOBAL_CONFIG.END_MORNING_TIME)
                 {
-                    Utils::Interval currentSlot{start, end};
-
-                    if (canPlace(currentStudent, tryDay, currentSlot))
+                    if (Utils::Interval currentSlot{start, end}; canPlace(currentStudent, tryDay, currentSlot))
                     {
                         place(currentStudent, tryDay, currentSlot, currentRoomId);
                         isCurrentStudentPlaced = true;
@@ -78,9 +75,7 @@ bool Scheduler::scheduleAll()
                 end = start + duration;
                 if (end <= GLOBAL_CONFIG.END_AFTERNOON_TIME && !isCurrentStudentPlaced)
                 {
-                    Utils::Interval currentSlot{start, end};
-
-                    if (canPlace(currentStudent, tryDay, currentSlot))
+                    if (Utils::Interval currentSlot{start, end}; canPlace(currentStudent, tryDay, currentSlot))
                     {
                         place(currentStudent, tryDay, currentSlot, currentRoomId);
                         isCurrentStudentPlaced = true;
@@ -172,9 +167,8 @@ void Scheduler::place(const Student &pStudent, const unsigned short int pDay, co
 
     // Advance room pointer for that day: add presentation time + break
     ensureDayCapacity(pDay);
-    Room &usedRoom = mRooms[pRoomId];
     // Decide whether we used morning or afternoon pointer
-    if (pSlot.mStart >= GLOBAL_CONFIG.START_MORNING_TIME && pSlot.mEnd <= GLOBAL_CONFIG.END_MORNING_TIME && pSlot.mStart == usedRoom.mMorningPointerByDay[pDay])
+    if (Room &usedRoom = mRooms[pRoomId]; pSlot.mStart >= GLOBAL_CONFIG.START_MORNING_TIME && pSlot.mEnd <= GLOBAL_CONFIG.END_MORNING_TIME && pSlot.mStart == usedRoom.mMorningPointerByDay[pDay])
     { usedRoom.mMorningPointerByDay[pDay] = pSlot.mEnd + this->mBreakLength; }
     else if (pSlot.mStart >= GLOBAL_CONFIG.START_AFTERNOON_TIME && pSlot.mEnd <= GLOBAL_CONFIG.END_AFTERNOON_TIME && pSlot.mStart == usedRoom.mAfternoonPointerByDay[pDay])
     { usedRoom.mAfternoonPointerByDay[pDay] = pSlot.mEnd + this->mBreakLength; }

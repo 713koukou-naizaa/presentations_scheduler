@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include <fstream>
-#include <sstream>
 #include <stdexcept>
 
 #include "config.h"
@@ -36,17 +35,6 @@ void Utils::displayVectors(const vector<Student> &pStudents, const vector<Teache
     }
 }
 
-string Utils::loadFileToString(const string &pFilePath)
-{
-    std::ifstream pFileStream(pFilePath);
-    if (!pFileStream.is_open()) { throw std::runtime_error("Unable to open file: " + pFilePath); }
-
-    std::stringstream buffer;
-    buffer << pFileStream.rdbuf();
-    pFileStream.close();
-    return buffer.str();
-}
-
 nlohmann::json Utils::readNextJsonFromStdin()
 {
     string line;
@@ -55,7 +43,7 @@ nlohmann::json Utils::readNextJsonFromStdin()
     {
         // trim simple whitespace-only lines
         bool allSpace = true;
-        for (char c : line) { if (!std::isspace(static_cast<unsigned char>(c))) { allSpace = false; break; } }
+        for (const char c : line) { if (!std::isspace(static_cast<unsigned char>(c))) { allSpace = false; break; } }
         if (!allSpace) break;
     }
 
