@@ -23,7 +23,7 @@ struct Scheduler
 
     vector<Presentation> mAssignments;
 
-    // Initialise scheduler with some capacity of days
+    // Initialize scheduler with some capacity of days
     Scheduler(vector<Student>, vector<Teacher>, vector<Room>);
 
     // Ensure internal per-day containers are big enough
@@ -33,10 +33,10 @@ struct Scheduler
     bool scheduleAll();
 
     // Check participants availability and constraints for the given student, day, slot, room
-    bool canPlace(const Student &, unsigned short int, const Utils::Interval &);
+    bool canPlace(unsigned int, unsigned short int, const Utils::Interval &);
 
     // Place the presentation: pick a specific second teacher (random among valid), book everything, advance room pointer
-    void place(const Student &, unsigned short int, const Utils::Interval &, unsigned short int);
+    void place(unsigned int, unsigned short int, const Utils::Interval &, unsigned short int);
 
     // Print final schedule
     void printSchedule();

@@ -9,6 +9,16 @@ using namespace std;
 using std::cout;
 using std::endl;
 
+// Helper to find index in vector<T> where item.mId == id, return -1 if not found
+template<typename T>
+static int findIndexById(const vector<T> &pVector, unsigned int pId)
+{
+    for (size_t i = 0; i < pVector.size(); i++)
+        if (pVector[i].mId == pId) return static_cast<int>(i);
+
+    return -1;
+}
+
 Scheduler::Scheduler(vector<Student> pStudents, vector<Teacher> pTeachers, vector<Room> pRooms) : mStudents(std::move(pStudents)), mTeachers(std::move(pTeachers)), mRooms(std::move(pRooms)) {}
 
 // Ensure internal per-day containers are big enough
@@ -34,15 +44,15 @@ bool Scheduler::scheduleAll()
     // Order students sorted by accommodated length descending (longer first helps greedy, and sort helps algorithm)
     vector<unsigned short int> order(this->mStudents.size());
     iota(order.begin(), order.end(), 0);
-    sort(order.begin(), order.end(), [&](const unsigned short int studentIdOne, const unsigned short int studentIdTwo) {
+    sort(order.begin(), order.end(), [&](const unsigned int studentIdOne, const unsigned int studentIdTwo) {
             return this->mStudents[studentIdOne].mEffectivePresentationLength > this->mStudents[studentIdTwo].mEffectivePresentationLength;
         }
     );
 
-    for(unsigned short int currentStudentIdIndex=0; currentStudentIdIndex<static_cast<unsigned short int>(order.size()); ++currentStudentIdIndex)
+    for(unsigned int currentStudentIdIndex=0; currentStudentIdIndex<static_cast<unsigned short int>(order.size()); ++currentStudentIdIndex)
     {
-        const unsigned short int studentIndex = order[currentStudentIdIndex];
-        Student &currentStudent = this->mStudents[studentIndex];
+        const unsigned int studentIndex = order[currentStudentIdIndex];
+        const Student &currentStudent = this->mStudents[studentIndex];
 
         // Attempt scheduling, extend days if necessary
         bool isCurrentStudentPlaced = false;
@@ -63,9 +73,9 @@ bool Scheduler::scheduleAll()
                 unsigned short int end = start + duration;
                 if (end <= GLOBAL_CONFIG.END_MORNING_TIME)
                 {
-                    if (Utils::Interval currentSlot{start, end}; canPlace(currentStudent, tryDay, currentSlot))
+                    if (Utils::Interval currentSlot{start, end}; canPlace(studentIndex, tryDay, currentSlot))
                     {
-                        place(currentStudent, tryDay, currentSlot, currentRoomId);
+                        place(studentIndex, tryDay, currentSlot, currentRoomId);
                         isCurrentStudentPlaced = true;
                         break;
                     }
@@ -75,9 +85,9 @@ bool Scheduler::scheduleAll()
                 end = start + duration;
                 if (end <= GLOBAL_CONFIG.END_AFTERNOON_TIME && !isCurrentStudentPlaced)
                 {
-                    if (Utils::Interval currentSlot{start, end}; canPlace(currentStudent, tryDay, currentSlot))
+                    if (Utils::Interval currentSlot{start, end}; canPlace(studentIndex, tryDay, currentSlot))
                     {
-                        place(currentStudent, tryDay, currentSlot, currentRoomId);
+                        place(studentIndex, tryDay, currentSlot, currentRoomId);
                         isCurrentStudentPlaced = true;
                         break;
                     }
@@ -96,10 +106,13 @@ bool Scheduler::scheduleAll()
 }
 
 // Check participants availability and constraints for the given student, day, slot, room
-bool Scheduler::canPlace(const Student &pStudent, const unsigned short int pDay, const Utils::Interval &pSlot)
+bool Scheduler::canPlace(const unsigned int pStudentIndex, const unsigned short int pDay, const Utils::Interval &pSlot)
 {
-    // Referent teacher must be available
-    Teacher &studentReferentTeacher = this->mTeachers[pStudent.mReferentTeacherId];
+    // Find referent teacher index from the referent teacher external id
+    const unsigned short int referentExternalId = this->mStudents[pStudentIndex].mReferentTeacherId;
+    const int referentIndex = findIndexById(this->mTeachers, referentExternalId);
+    if (referentIndex < 0) return false;
+    Teacher &studentReferentTeacher = this->mTeachers[static_cast<size_t>(referentIndex)];
     if (!studentReferentTeacher.isAvailable(pDay, pSlot)) return false;
 
     // Find a second teacher (teacher != referent) who is available and respects the "technical" constraint
@@ -107,11 +120,10 @@ bool Scheduler::canPlace(const Student &pStudent, const unsigned short int pDay,
     bool foundSecond = false;
     for(unsigned short int currentTeacherId=0; currentTeacherId<static_cast<unsigned short int>(this->mTeachers.size()); ++currentTeacherId)
     {
-        if (currentTeacherId == studentReferentTeacher.mId) continue;
+        if (static_cast<int>(currentTeacherId) == referentIndex) continue;
         if (needTechnicalSecond && !this->mTeachers[currentTeacherId].mIsTechnical) continue;
         if (!this->mTeachers[currentTeacherId].isAvailable(pDay, pSlot)) continue;
         foundSecond = true;
-
         break;
     }
 
@@ -124,20 +136,24 @@ bool Scheduler::canPlace(const Student &pStudent, const unsigned short int pDay,
 }
 
 // Place the presentation: pick a specific second teacher (random among valid), book everything, advance room pointer
-void Scheduler::place(const Student &pStudent, const unsigned short int pDay, const Utils::Interval &pSlot, const unsigned short int pRoomId)
+void Scheduler::place(const unsigned int pStudentIndex, const unsigned short int pDay, const Utils::Interval &pSlot, const unsigned short int pRoomId)
 {
-    Teacher &studentReferentTeacher = this->mTeachers[pStudent.mReferentTeacherId];
+    const unsigned short int referentExternalId = this->mStudents[pStudentIndex].mReferentTeacherId;
+    const int referentIndex = findIndexById(this->mTeachers, referentExternalId);
+    if (referentIndex < 0) throw runtime_error("Referent teacher not found in place()");
 
-    // Select second teacher candidates
+    Teacher &studentReferentTeacher = this->mTeachers[static_cast<size_t>(referentIndex)];
+
+    // Select second teacher candidates (use teacher indices)
     vector<unsigned short int> secondTeacherCandidates;
     const bool needTechnicalSecond = !studentReferentTeacher.mIsTechnical;
     for(unsigned short int currentTeacherId=0; currentTeacherId<static_cast<unsigned short int>(this->mTeachers.size()); ++currentTeacherId)
     {
-        if (currentTeacherId == studentReferentTeacher.mId) continue;
+        if (static_cast<int>(currentTeacherId) == referentIndex) continue;
         if (needTechnicalSecond && !this->mTeachers[currentTeacherId].mIsTechnical) continue;
         if (this->mTeachers[currentTeacherId].isAvailable(pDay, pSlot)) secondTeacherCandidates.push_back(currentTeacherId);
     }
-    
+
     // If no candidates were found
     if (secondTeacherCandidates.empty())
     {
@@ -148,21 +164,21 @@ void Scheduler::place(const Student &pStudent, const unsigned short int pDay, co
     // Random pick amongst candidates (use seed (i.e. 123456) for reproducibility)
     static std::mt19937 rng(std::random_device{}());
     shuffle(secondTeacherCandidates.begin(), secondTeacherCandidates.end(), rng);
-    const unsigned short int secondTeacherId = secondTeacherCandidates[0];
+    const unsigned short int secondTeacherIndex = secondTeacherCandidates[0];
 
     // Book referent, second teacher
     studentReferentTeacher.book(pDay, pSlot);
-    this->mTeachers[secondTeacherId].book(pDay, pSlot);
+    this->mTeachers[secondTeacherIndex].book(pDay, pSlot);
 
-    // Record assignment as presentation
+    // Record assignment as presentation (store vector indices for student and teachers)
     Presentation finalPresentation{};
-    finalPresentation.mStudentId = pStudent.mId;
+    finalPresentation.mStudentId = pStudentIndex; // store student vector index
     finalPresentation.mDay = pDay;
     finalPresentation.mRoomId = pRoomId;
     finalPresentation.mStartMinute = pSlot.mStart;
     finalPresentation.mDuration = pSlot.mEnd - pSlot.mStart;
-    finalPresentation.mReferentTeacherId = studentReferentTeacher.mId;
-    finalPresentation.mSecondTeacherId = secondTeacherId;
+    finalPresentation.mReferentTeacherId = static_cast<unsigned short int>(referentIndex); // store teacher vector index
+    finalPresentation.mSecondTeacherId = secondTeacherIndex; // teacher vector index
     this->mAssignments.push_back(finalPresentation);
 
     // Advance room pointer for that day: add presentation time + break

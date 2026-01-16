@@ -7,7 +7,7 @@ using std::string;
 
 struct Student
 {
-    unsigned short int mId{};
+    unsigned int mId{};
     string mName;
     bool mHasAccommodations{};
     unsigned short int mEffectivePresentationLength{};

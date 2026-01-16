@@ -9,7 +9,6 @@
 
 using namespace std;
 
-Config GLOBAL_CONFIG;
 
 int main(const int argc, char* argv[])
 {

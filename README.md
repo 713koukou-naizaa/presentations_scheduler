@@ -9,6 +9,9 @@ A C++ scheduling component developed for the university web project `Gestion de 
 - Reads data from stdin.
 - Returns the output into stdout.
 
+## Tests
+Unit tests have been made in the `tests` directory, the latest coverage report is available in `coverage-report`.
+
 ## Generate dummy JSON data
 Methods in the [prod_web_launcher.php](prod_web_launcher.php) file generates dummy JSON data for teachers, students and rooms.
 
@@ -31,28 +34,13 @@ chmod +x prod_web_launcher.php
 php prod_web_launcher.php
 ```
 
-## Development example run
-The [simulate_dev_run.sh](simulate_dev_run.sh) file simulates a development run of the binary file (make using [Makefile](Makefile), call to the run shell script and call to the binary file).
-
-```bash
-chmod +x simulate_dev_run.sh
-./simulate_dev_run.sh
-```
-
-## Production example run
-The [simulate_prod_run.sh](simulate_prod_run.sh) file simulates a production run of the binary file (call to the php web launcher, call to the run shell script and call to the binary file).
-
-```bash
-chmod +x simulate_prod_run.sh
-./simulate_prod_run.sh
-```
-
 ## Project structure
 - `bin` - compiled binary output
+- `coverage-report` - latest tests coverage report
 - `docs` documentations (algorithm outline, related documentation, ...)
 - `include/` - public headers (`config.h`, `json.hpp`, `Presentation.h`, `Room.h`, `Scheduler.h`, `Student.h`, `Teacher.h`, `Utils.h`)
-- `json` - JSON files (`teachers.json`, `students.json`, `rooms.json` created after dummy data generation, `planning.json`, `salles.json`, `soutenances.json` created after algorithm execution)
-- `src/` — implementation files (`Room.cpp`, `Scheduler.cpp`, `Teacher.cpp`, `Utils.cpp`)
+- `src/` - implementation files (`Room.cpp`, `Scheduler.cpp`, `Teacher.cpp`, `Utils.cpp`)
+- `tests/` - unit tests (`Test_Utils.cpp`)
 - `.gitignore` - git ignore file
 - `download_bin.sh` - download binary file example
 - `Makefile` - build rules

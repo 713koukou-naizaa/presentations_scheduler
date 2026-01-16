@@ -13,6 +13,7 @@
 using std::cout;
 using std::endl;
 
+// GCOVR_EXCL_START
 void Utils::displayVectors(const vector<Student> &pStudents, const vector<Teacher> &pTeachers, const vector<Room> &pRooms)
 {
     // display all vectors
@@ -34,6 +35,7 @@ void Utils::displayVectors(const vector<Student> &pStudents, const vector<Teache
         cout << "\t" << room.mId << " " << room.mTag << endl;
     }
 }
+// GCOVR_EXCL_STOP
 
 nlohmann::json Utils::readNextJsonFromStdin()
 {
@@ -62,7 +64,7 @@ vector<Student> Utils::loadStudentsFromStdin()
     for (const auto &currentJsonItem : jsonInstance)
     {
         Student currentStudent;
-        currentStudent.mId = currentJsonItem.at("id").get<unsigned short int>();
+        currentStudent.mId = currentJsonItem.at("id").get<unsigned int>();
         currentStudent.mName = currentJsonItem.at("name").get<string>();
         currentStudent.mHasAccommodations = currentJsonItem.at("hasAccommodations").get<bool>();
         currentStudent.mEffectivePresentationLength = currentStudent.mHasAccommodations ? GLOBAL_CONFIG.ACCOMMODATED_PRESENTATION_LENGTH : GLOBAL_CONFIG.NORMAL_PRESENTATION_LENGTH;
@@ -122,6 +124,7 @@ string Utils::minutesToHHMM(const unsigned short int pMinutes)
     return buf;
 }
 
+// GCOVR_EXCL_START
 void Utils::printParameters()
 {
     cout << "Parameters:" << endl;
@@ -151,5 +154,6 @@ void Utils::printParameters()
 
     cout << endl;
 }
+// GCOVR_EXCL_STOP
 
 bool Utils::Interval::overlaps(const Interval &pOther) const { return !(this->mEnd <= pOther.mStart || pOther.mEnd <= this->mStart); }
