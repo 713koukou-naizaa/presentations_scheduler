@@ -9,7 +9,7 @@ using namespace std;
 using std::cout;
 using std::endl;
 
-// Helper to find index in vector<T> where item.mId == id, return -1 if not found
+// Helper to find index in vector<T> where item.mId == pId, return -1 if not found
 template<typename T>
 static int findIndexById(const vector<T> &pVector, unsigned int pId)
 {
@@ -196,6 +196,7 @@ void Scheduler::place(const unsigned int pStudentIndex, const unsigned short int
     }
 }
 
+// GCOVR_EXCL_START
 // Print final schedule
 void Scheduler::printSchedule()
 {
@@ -221,6 +222,7 @@ void Scheduler::printSchedule()
                 << "\n";
     }
 }
+// GCOVR_EXCL_STOP
 
 // Output final schedule to a JSON file
 string Scheduler::outputJSONResult() const

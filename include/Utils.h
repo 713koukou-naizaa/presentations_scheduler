@@ -15,6 +15,8 @@ using std::vector;
 
 struct Utils
 {
+    static void setGlobalConfig(unsigned short int, unsigned short int, unsigned short int, unsigned short int, unsigned short int, unsigned short int, unsigned short int, unsigned short int, unsigned short int, unsigned short int, unsigned short int);
+
     static void displayVectors(const vector<Student> &, const vector<Teacher> &, const vector<Room> &);
 
     static nlohmann::json readNextJsonFromStdin();

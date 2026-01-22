@@ -33,14 +33,14 @@ protected:
     void TearDown() override
     {
         // Restore cin
-        std::cin.rdbuf(origCin);
+        (void)std::cin.rdbuf(origCin);
     }
 
     void setCinInput(const std::string& input)
     {
         inputBuffer.str(input);
         inputBuffer.clear();
-        std::cin.rdbuf(inputBuffer.rdbuf());
+        (void)std::cin.rdbuf(inputBuffer.rdbuf());
     }
 };
 
@@ -95,7 +95,7 @@ TEST_F(UtilsTest, LoadsStudentsCorrectly)
 {
     setCinInput(R"([{"id":1,"name":"Alice","hasAccommodations":true,"referentTeacherId":100},{"id":2,"name":"Bob","hasAccommodations":false,"referentTeacherId":101}])");
 
-    auto students = Utils::loadStudentsFromStdin();
+    const auto students = Utils::loadStudentsFromStdin();
 
     ASSERT_EQ(students.size(), 2u);
     EXPECT_EQ(students[0].mId, 1u);
@@ -115,7 +115,7 @@ TEST_F(UtilsTest, LoadsTeachersCorrectly)
 {
     setCinInput(R"([{"id":10,"name":"Mr. Smith","isTechnical":true},{"id":11,"name":"Ms. Johnson","isTechnical":false}])");
 
-    auto teachers = Utils::loadTeachersFromStdin();
+    const auto teachers = Utils::loadTeachersFromStdin();
 
     ASSERT_EQ(teachers.size(), 2u);
     EXPECT_EQ(teachers[0].mId, 10u);
@@ -131,7 +131,7 @@ TEST_F(UtilsTest, LoadsRoomsCorrectly)
 {
     setCinInput(R"([{"id":101,"tag":"A1"},{"id":102,"tag":"B2"}])");
 
-    auto rooms = Utils::loadRoomsFromStdin();
+    const auto rooms = Utils::loadRoomsFromStdin();
 
     ASSERT_EQ(rooms.size(), 2u);
     EXPECT_EQ(rooms[0].mId, 101u);
@@ -180,32 +180,32 @@ TEST_F(UtilsTest, LeadingZeros) { EXPECT_EQ(Utils::minutesToHHMM(9), "00:09"); }
 
 TEST_F(UtilsTest, PartialOverlap)
 {
-    Utils::Interval a{10, 20};
-    Utils::Interval b{15, 25};
+    constexpr Utils::Interval a{10, 20};
+    constexpr Utils::Interval b{15, 25};
 
     EXPECT_TRUE(a.overlaps(b));
 }
 
 TEST_F(UtilsTest, NoOverlapTouchingBoundary)
 {
-    Utils::Interval a{10, 20};
-    Utils::Interval b{20, 30};
+    constexpr Utils::Interval a{10, 20};
+    constexpr Utils::Interval b{20, 30};
 
     EXPECT_FALSE(a.overlaps(b));
 }
 
 TEST_F(UtilsTest, OneContainedInAnother)
 {
-    Utils::Interval a{10, 30};
-    Utils::Interval b{15, 20};
+    constexpr Utils::Interval a{10, 30};
+    constexpr Utils::Interval b{15, 20};
 
     EXPECT_TRUE(a.overlaps(b));
 }
 
 TEST_F(UtilsTest, CompletelySeparate)
 {
-    Utils::Interval a{10, 15};
-    Utils::Interval b{20, 25};
+    constexpr Utils::Interval a{10, 15};
+    constexpr Utils::Interval b{20, 25};
 
     EXPECT_FALSE(a.overlaps(b));
 }

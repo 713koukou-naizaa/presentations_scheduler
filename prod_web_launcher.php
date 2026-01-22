@@ -3,43 +3,21 @@
 function generateTeachers(int $count = 15): array
 {
     $teachers = [];
-    for ($i = 0; $i < $count; $i++) {
-        $name = sprintf("Teacher_%02d", $i);
-        $teachers[] = [
-            "id" => $i,
-            "name" => $name,
-            "isTechnical" => (mt_rand(0, 1) === 1),
-            "weeklyRemainingMinutes" => 1200
-        ];
-    }
+    for ($i = 0; $i < $count; $i++) { $teachers[] = ["id" => $i, "name" => sprintf("Teacher_%02d", $i), "isTechnical" => (mt_rand(0, 1) === 1), "weeklyRemainingMinutes" => 1200]; }
     return $teachers;
 }
 
 function generateStudents(int $count = 60, int $teacherCount = 15): array
 {
     $students = [];
-    for ($i = 0; $i < $count; $i++) {
-        $name = sprintf("Student_%02d", $i);
-        $students[] = [
-            "id" => $i,
-            "name" => $name,
-            "hasAccommodations" => (mt_rand(1, 4) === 1),
-            "referentTeacherId" => mt_rand(0, max(0, $teacherCount - 1)),
-            "tutorId" => $i
-        ];
-    }
+    for ($i = 0; $i < $count; $i++) { $students[] = ["id" => $i, "name" => sprintf("Student_%02d", $i), "hasAccommodations" => (mt_rand(1, 4) === 1), "referentTeacherId" => mt_rand(0, max(0, $teacherCount - 1))]; }
     return $students;
 }
 
 function generateRooms(int $count = 8): array
 {
     $rooms = [];
-    for ($i = 0; $i < $count; $i++) {
-        $rooms[] = [
-            "id" => $i,
-            "tag" => sprintf("Room_%02d", $i)
-        ];
-    }
+    for ($i = 0; $i < $count; $i++) { $rooms[] = ["id" => $i, "tag" => sprintf("Room_%02d", $i)]; }
     return $rooms;
 }
 
@@ -78,7 +56,7 @@ echo "Executing:" . $cmd . "\n";
 
 // Arrays to send to stdin as JSON
 $stdinTeachers = generateTeachers();
-$stdinStudents = generateStudents(60, count($stdinTeachers));
+$stdinStudents = generateStudents();
 $stdinRooms = generateRooms();
 
 $stdinContent = json_encode($stdinStudents) . "\n"
@@ -90,6 +68,10 @@ $descriptorSpecs = [
     1 => ['pipe', 'w'], // stdout
     2 => ['pipe', 'w']  // stderr
 ];
+
+$startMem = memory_get_usage(true);
+$startCPU = getrusage();
+$startTime = microtime(true);
 
 $process = proc_open($cmd, $descriptorSpecs, $pipes);
 
@@ -120,5 +102,14 @@ if ($returnStatus != 0)
     exit(1);
 }
 
-if (strlen($stdout) > 0) { foreach (preg_split("/\r\n|\n|\r/", trim($stdout)) as $line) { echo $line . "\n"; }
-}
+if (strlen($stdout) > 0) { foreach (preg_split("/\r\n|\n|\r/", trim($stdout)) as $line) { echo $line . "\n"; } }
+
+$endTime = microtime(true);
+$endCPU = getrusage();
+$endMem = memory_get_usage(true);
+$peakMem = memory_get_peak_usage(true);
+
+echo "\nTime: " . ($endTime - $startTime) . "s\n";
+echo "Memory used: " . ($endMem - $startMem) . " bytes\n";
+echo "Peak memory: " . $peakMem . " bytes\n";
+echo "CPU user time: " . ($endCPU["ru_utime.tv_sec"] - $startCPU["ru_utime.tv_sec"]) . "s\n";

@@ -13,6 +13,24 @@
 using std::cout;
 using std::endl;
 
+void Utils::setGlobalConfig(const unsigned short int pStartMorningTime, const unsigned short int pEndMorningTime, const unsigned short int pStartAfternoonTime, const unsigned short int pEndAfternoonTime, const unsigned short int pNormalPresentationLength, const unsigned short int pAccommodatedPresentationLength, const unsigned short int pInBetweenBreakLength, const unsigned short int pMaxTeachersWeeklyWorkedTime, const unsigned short int pNbStudents, const unsigned short int pNbTeachers, const unsigned short int pNbRooms)
+{
+    GLOBAL_CONFIG.START_MORNING_TIME = pStartMorningTime;
+    GLOBAL_CONFIG.END_MORNING_TIME = pEndMorningTime;
+    GLOBAL_CONFIG.START_AFTERNOON_TIME = pStartAfternoonTime;
+    GLOBAL_CONFIG.END_AFTERNOON_TIME = pEndAfternoonTime;
+
+    GLOBAL_CONFIG.NORMAL_PRESENTATION_LENGTH = pNormalPresentationLength;
+    GLOBAL_CONFIG.ACCOMMODATED_PRESENTATION_LENGTH = pAccommodatedPresentationLength;
+    GLOBAL_CONFIG.IN_BETWEEN_BREAK_LENGTH = pInBetweenBreakLength;
+
+    GLOBAL_CONFIG.MAX_TEACHERS_WEEKLY_WORKED_TIME = pMaxTeachersWeeklyWorkedTime;
+
+    GLOBAL_CONFIG.NB_STUDENTS = pNbStudents;
+    GLOBAL_CONFIG.NB_TEACHERS = pNbTeachers;
+    GLOBAL_CONFIG.NB_ROOMS = pNbRooms;
+}
+
 // GCOVR_EXCL_START
 void Utils::displayVectors(const vector<Student> &pStudents, const vector<Teacher> &pTeachers, const vector<Room> &pRooms)
 {
@@ -120,7 +138,7 @@ string Utils::minutesToHHMM(const unsigned short int pMinutes)
     const unsigned short int hh = pMinutes / 60;
     const unsigned short int mm = pMinutes % 60;
     char buf[8];
-    snprintf(buf, sizeof(buf), "%02d:%02d", hh, mm);
+    (void)snprintf(buf, sizeof(buf), "%02d:%02d", hh, mm);
     return buf;
 }
 
