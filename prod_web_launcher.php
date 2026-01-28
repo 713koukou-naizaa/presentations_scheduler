@@ -69,47 +69,28 @@ $descriptorSpecs = [
     2 => ['pipe', 'w']  // stderr
 ];
 
-$startMem = memory_get_usage(true);
-$startCPU = getrusage();
-$startTime = microtime(true);
+ini_set('memory_limit', '2G');
 
-$process = proc_open($cmd, $descriptorSpecs, $pipes);
-
-if (!is_resource($process))
+$avgTime = 0;
+for($i = 0; $i<10000; $i++)
 {
-    echo "Error: failed to start process\n";
-    exit(1);
+    $startTime = microtime(true);
+    $process = proc_open($cmd, $descriptorSpecs, $pipes);
+
+    // Write JSON input in stdin and close it
+    fwrite($pipes[0], $stdinContent);
+    fclose($pipes[0]);
+
+    // Read stdout and stderr
+    $stdout = stream_get_contents($pipes[1]);
+    fclose($pipes[1]);
+    $stderr = stream_get_contents($pipes[2]);
+    fclose($pipes[2]);
+
+    $returnStatus = proc_close($process);
+    $endTime = microtime(true);
+    $avgTime += $endTime - $startTime;
 }
+echo "\nFinal time:" . $avgTime/10000 . "s\n";
 
-// Write JSON input in stdin and close it
-fwrite($pipes[0], $stdinContent);
-fclose($pipes[0]);
 
-// Read stdout and stderr
-$stdout = stream_get_contents($pipes[1]);
-fclose($pipes[1]);
-
-$stderr = stream_get_contents($pipes[2]);
-fclose($pipes[2]);
-
-$returnStatus = proc_close($process);
-
-if ($returnStatus != 0)
-{
-    if (strlen($stdout) > 0) { foreach (preg_split("/\r\n|\n|\r/", trim($stdout)) as $line) { echo $line . "\n"; } }
-    if (strlen($stderr) > 0) { foreach (preg_split("/\r\n|\n|\r/", trim($stderr)) as $line) { echo $line . "\n"; } }
-    echo "Error: " . $returnStatus . "\n";
-    exit(1);
-}
-
-if (strlen($stdout) > 0) { foreach (preg_split("/\r\n|\n|\r/", trim($stdout)) as $line) { echo $line . "\n"; } }
-
-$endTime = microtime(true);
-$endCPU = getrusage();
-$endMem = memory_get_usage(true);
-$peakMem = memory_get_peak_usage(true);
-
-echo "\nTime: " . ($endTime - $startTime) . "s\n";
-echo "Memory used: " . ($endMem - $startMem) . " bytes\n";
-echo "Peak memory: " . $peakMem . " bytes\n";
-echo "CPU user time: " . ($endCPU["ru_utime.tv_sec"] - $startCPU["ru_utime.tv_sec"]) . "s\n";
