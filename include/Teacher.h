@@ -19,8 +19,7 @@ struct Teacher
     // schedule for avoiding overlaps: vector of (day -> intervals)
     vector<vector<Utils::Interval>> mBusyByDay; // mBusyByDay[day] = list of intervals
 
-    Teacher();
-    Teacher(unsigned short int, string , bool, unsigned short int, unsigned short int);
+    Teacher(unsigned short int, string , bool);
 
     bool isAvailable(unsigned short int, Utils::Interval);
     void book(unsigned short int, Utils::Interval);

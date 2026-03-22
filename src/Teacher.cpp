@@ -1,11 +1,8 @@
 #include "Teacher.h"
 
-#include <algorithm>
 #include <utility>
 
-Teacher::Teacher() = default;
-
-Teacher::Teacher(const unsigned short int pId, string pName, const bool pIsTechnical, const unsigned short int pWeeklyLimit, const unsigned short int pInitialDays) : mId(pId), mName(std::move(pName)), mIsTechnical(pIsTechnical), mWeeklyRemainingMinutes(pWeeklyLimit), mBusyByDay(pInitialDays) {}
+Teacher::Teacher(const unsigned short int pId, string pName, const bool pIsTechnical) : mId(pId), mName(std::move(pName)), mIsTechnical(pIsTechnical) {}
 
 bool Teacher::isAvailable(const unsigned short int pDay, const Utils::Interval pSlot)
 {

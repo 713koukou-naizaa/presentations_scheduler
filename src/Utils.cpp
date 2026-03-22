@@ -81,12 +81,11 @@ vector<Student> Utils::loadStudentsFromStdin()
 
     for (const auto &currentJsonItem : jsonInstance)
     {
-        Student currentStudent;
-        currentStudent.mId = currentJsonItem.at("id").get<unsigned int>();
-        currentStudent.mName = currentJsonItem.at("name").get<string>();
-        currentStudent.mHasAccommodations = currentJsonItem.at("hasAccommodations").get<bool>();
-        currentStudent.mEffectivePresentationLength = currentStudent.mHasAccommodations ? GLOBAL_CONFIG.ACCOMMODATED_PRESENTATION_LENGTH : GLOBAL_CONFIG.NORMAL_PRESENTATION_LENGTH;
-        currentStudent.mReferentTeacherId = currentJsonItem.at("referentTeacherId").get<unsigned short int>();
+        Student currentStudent(currentJsonItem.at("id").get<unsigned int>(),
+                               currentJsonItem.at("name").get<string>(),
+                               currentJsonItem.at("hasAccommodations").get<bool>(),
+                               currentJsonItem.at("hasAccommodations").get<bool>() ? GLOBAL_CONFIG.ACCOMMODATED_PRESENTATION_LENGTH : GLOBAL_CONFIG.NORMAL_PRESENTATION_LENGTH,
+                               currentJsonItem.at("referentTeacherId").get<unsigned short int>());
 
         students.push_back(currentStudent);
     }
@@ -103,10 +102,9 @@ vector<Teacher> Utils::loadTeachersFromStdin()
 
     for (const auto &currentJsonItem : jsonInstance)
     {
-        Teacher currentTeacher;
-        currentTeacher.mId = currentJsonItem.at("id").get<unsigned short int>();
-        currentTeacher.mName = currentJsonItem.at("name").get<string>();
-        currentTeacher.mIsTechnical = currentJsonItem.at("isTechnical").get<bool>();
+        Teacher currentTeacher(currentJsonItem.at("id").get<unsigned short int>(),
+                               currentJsonItem.at("name").get<string>(),
+                               currentJsonItem.at("isTechnical").get<bool>());
 
         teachers.push_back(currentTeacher);
     }
@@ -123,9 +121,8 @@ vector<Room> Utils::loadRoomsFromStdin()
 
     for (const auto &currentJsonItem : jsonInstance)
     {
-        Room currentRoom;
-        currentRoom.mId = currentJsonItem.at("id").get<unsigned short int>();
-        currentRoom.mTag = currentJsonItem.at("tag").get<string>();
+        Room currentRoom(currentJsonItem.at("id").get<unsigned short int>(),
+                         currentJsonItem.at("tag").get<string>());
 
         rooms.push_back(currentRoom);
     }

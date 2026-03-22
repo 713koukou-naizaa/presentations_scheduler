@@ -15,8 +15,7 @@ struct Room
     vector<int> mMorningPointerByDay; // next start minute in morning for that room
     vector<int> mAfternoonPointerByDay; // next start minute in afternoon for that room
 
-    Room();
-    Room(int, string , int);
+    Room(int, string);
 };
 
 #endif

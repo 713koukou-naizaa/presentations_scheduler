@@ -3,7 +3,7 @@
 
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <title>Room.cpp - GCC Code Coverage Report</title>
+    <title>Presentation.cpp - GCC Code Coverage Report</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <link rel="stylesheet" href="index.css"/>
     <script src="index.js"></script>
@@ -17,7 +17,7 @@
         </div>
         <hr class="block-separator"/>
         <header>
-<div id="summary-index.Room.cpp.dd057a251566c0d93da0e004330a8273.html" class="summary">
+<div id="summary-index.Presentation.cpp.6f2b205a4869b09a75042072b1a52c8b.html" class="summary">
   <div>
     <table class="legend">
       <tr>
@@ -44,7 +44,7 @@
       <tr>
         <th scope="row">Lines:</th>
         <td class="coverage-none">0.0%</td>
-        <td class="coverage-none">0 / 0 / 1</td>
+        <td class="coverage-none">0 / 0 / 2</td>
       </tr>
       <tr>
         <th scope="row">Functions:</th>
@@ -74,7 +74,7 @@
     <div role="rowheader" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">Blocks</div>
   </div>
   <div class="Box-row Box-row--focus-gray py-2 d-flex">
-    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2"><a href="#l7">Room::Room(int, std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;) (src/Room.cpp:7)</a>    </div>
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2"><a href="#l3">Presentation::Presentation(unsigned short, unsigned short, unsigned short, unsigned short, unsigned short, unsigned short, unsigned short) (src/Presentation.cpp:3)</a>    </div>
     <div role="gridcell" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline" data-sort="0">not called</div>
     <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">0.0%</div>
     <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">-%</div>
@@ -87,17 +87,17 @@
         <main>
 <div class="Box m-3 file-source">
   <div class="Box-header d-flex flex-space-between sticky">
-    Room.cpp
+    Presentation.cpp
     <div class="toggle-buttons">
       <button type="button" class="button_toggle_coveredLine show_coveredLine" value="coveredLine" title="Toggle covered lines">0 covered</button>
-      <button type="button" class="button_toggle_uncoveredLine show_uncoveredLine" value="uncoveredLine" title="Toggle uncovered lines">1 uncovered</button>
+      <button type="button" class="button_toggle_uncoveredLine show_uncoveredLine" value="uncoveredLine" title="Toggle uncovered lines">2 uncovered</button>
       <button type="button" class="button_toggle_partialCoveredLine show_partialCoveredLine" value="partialCoveredLine" title="Toggle partial covered lines">0 partial covered</button>
       <button type="button" class="button_toggle_excludedLine show_excludedLine" value="excludedLine" title="Toggle excluded lines">0 excluded</button>
     </div>
     <div class="nav">
-      <a class="nav prev" href="index.Presentation.cpp.6f2b205a4869b09a75042072b1a52c8b.html"></a>
+      <a class="nav prev" href="index.html"></a>
       <a class="nav index" href="index.html"></a>
-      <a class="nav next" href="index.Scheduler.cpp.424d3728fdb7a4b57517873324d17c00.html"></a>
+      <a class="nav next" href="index.Room.cpp.dd057a251566c0d93da0e004330a8273.html"></a>
     </div>
   </div>
   <div class="source-table-container">
@@ -113,7 +113,7 @@
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Room.h&quot;</span></td>
+        <td class="src "><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Presentation.h&quot;</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l2" href="#l2">2</a></td>
@@ -126,39 +126,18 @@
         <td class="lineno"><a id="l3" href="#l3">3</a></td>
         <td class="linebranch">
         </td>
-        <td class="linecount"></td>
-        <td class="src "><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;utility&gt;</span></td>
+        <td class="linecount uncoveredLine show_uncoveredLine">&cross;</td>
+        <td class="src  uncoveredLine show_uncoveredLine"><span class="n">Presentation</span><span class="o">::</span><span class="n">Presentation</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">short</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">pStudentId</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">short</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">pDay</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">short</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">pRoomId</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">short</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">pStartMinute</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">short</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">pDuration</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">short</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">pReferentTeacherId</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">short</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">pSecondTeacherId</span><span class="p">)</span><span class="w"> </span><span class="o">:</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l4" href="#l4">4</a></td>
         <td class="linebranch">
         </td>
-        <td class="linecount"></td>
-        <td class="src "></td>
+        <td class="linecount uncoveredLine show_uncoveredLine">&cross;</td>
+        <td class="src  uncoveredLine show_uncoveredLine"><span class="n">mStudentId</span><span class="p">(</span><span class="n">pStudentId</span><span class="p">),</span><span class="w"> </span><span class="n">mDay</span><span class="p">(</span><span class="n">pDay</span><span class="p">),</span><span class="w"> </span><span class="n">mRoomId</span><span class="p">(</span><span class="n">pRoomId</span><span class="p">),</span><span class="w"> </span><span class="n">mStartMinute</span><span class="p">(</span><span class="n">pStartMinute</span><span class="p">),</span><span class="w"> </span><span class="n">mDuration</span><span class="p">(</span><span class="n">pDuration</span><span class="p">),</span><span class="w"> </span><span class="n">mReferentTeacherId</span><span class="p">(</span><span class="n">pReferentTeacherId</span><span class="p">),</span><span class="w"> </span><span class="n">mSecondTeacherId</span><span class="p">(</span><span class="n">pSecondTeacherId</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l5" href="#l5">5</a></td>
-        <td class="linebranch">
-        </td>
-        <td class="linecount"></td>
-        <td class="src "><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;config.h&quot;</span></td>
-      </tr>
-      <tr class="source-line">
-        <td class="lineno"><a id="l6" href="#l6">6</a></td>
-        <td class="linebranch">
-        </td>
-        <td class="linecount"></td>
-        <td class="src "></td>
-      </tr>
-      <tr class="source-line">
-        <td class="lineno"><a id="l7" href="#l7">7</a></td>
-        <td class="linebranch">
-        </td>
-        <td class="linecount uncoveredLine show_uncoveredLine">&cross;</td>
-        <td class="src  uncoveredLine show_uncoveredLine"><span class="n">Room</span><span class="o">::</span><span class="n">Room</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">pId</span><span class="p">,</span><span class="w"> </span><span class="n">string</span><span class="w"> </span><span class="n">pTag</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">mId</span><span class="p">(</span><span class="n">pId</span><span class="p">),</span><span class="w"> </span><span class="n">mTag</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">pTag</span><span class="p">))</span><span class="w"> </span><span class="p">{}</span></td>
-      </tr>
-      <tr class="source-line">
-        <td class="lineno"><a id="l8" href="#l8">8</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>

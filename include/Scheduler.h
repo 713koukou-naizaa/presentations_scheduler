@@ -23,6 +23,8 @@ struct Scheduler
 
     vector<Presentation> mAssignments;
 
+    enum TrySchedulingResultOptions { SCHEDULED, SAME_DAY, NEXT_WEEK, NOT_POSSIBLE };
+
     // Initialize scheduler with some capacity of days
     Scheduler(vector<Student>, vector<Teacher>, vector<Room>);
 
@@ -32,11 +34,15 @@ struct Scheduler
     // Try to schedule all students. Greedy earliest-fit; creates additional days if needed.
     bool scheduleAll();
 
-    // Check participants availability and constraints for the given student, day, slot, room
-    bool canPlace(unsigned int, unsigned short int, const Utils::Interval &);
+    Scheduler::TrySchedulingResultOptions tryScheduleStudentAtSlotAtDayAtRoom(const unsigned short int &, const unsigned short int &, const Utils::Interval &, const unsigned short int &);
 
-    // Place the presentation: pick a specific second teacher (random among valid), book everything, advance room pointer
-    void place(unsigned int, unsigned short int, const Utils::Interval &, unsigned short int);
+    void trySchedulingUntilTimeWindowFull(unsigned short dayNumber, unsigned short int currentRoomIdx, int& startTime, int endTime,
+    std::vector<unsigned short int>& toRetrySchedulingSameDay, std::vector<unsigned short int>& toScheduleStudents, std::vector<unsigned short int>& toRetrySchedulingNextWeekStudents,
+    bool& madeProgressThisDay);
+
+    static void removeStudentFromAllVectors(vector<unsigned short int> &, vector<unsigned short int> &, vector<unsigned short int> &, const unsigned short int &);
+
+    static void removeStudentFromVector(vector<unsigned short int> &, const unsigned short int &);
 
     // Print final schedule
     void printSchedule();
