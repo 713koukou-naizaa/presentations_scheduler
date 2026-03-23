@@ -1,13 +1,13 @@
 CXX = g++
 CXXFLAGS = -Wall -std=c++17 -Iinclude
-LDFLAGS = -static -static-libgcc -static-libstdc++
+LDFLAGS = -static
 
 CXXFLAGS_COV = $(CXXFLAGS) -fprofile-arcs -ftest-coverage
 LDFLAGS_COV = $(LDFLAGS) -lgcov
 
 MAIN = main.cpp
 SRC = src/Scheduler.cpp src/Teacher.cpp src/Room.cpp src/Presentation.cpp src/Student.cpp src/Utils.cpp src/config.cpp
-TESTS_SRC =
+TESTS_SRC = tests/SchedulerTest.cpp tests/UtilsTest.cpp tests/TeacherTest.cpp
 
 APP_OUT = bin/main
 TESTS_OUT = bin/tests

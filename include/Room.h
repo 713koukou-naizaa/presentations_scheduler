@@ -1,10 +1,11 @@
 #ifndef ROOM_H
 #define ROOM_H
 
-#include <string>
 #include <vector>
 
 using std::vector;
+
+#include <string>
 using std::string;
 
 struct Room
@@ -15,7 +16,7 @@ struct Room
     vector<int> mMorningPointerByDay; // next start minute in morning for that room
     vector<int> mAfternoonPointerByDay; // next start minute in afternoon for that room
 
-    Room(int, string);
+    explicit Room(unsigned short int, string );
 };
 
 #endif

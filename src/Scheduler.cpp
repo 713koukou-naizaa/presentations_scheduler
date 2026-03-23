@@ -315,10 +315,10 @@ void Scheduler::printSchedule()
         const Teacher &concernedSecondTeacher = this->mTeachers[currentAssignment.mSecondTeacherId];
         cout << "Day " << currentAssignment.mDay+1 << " | " << Utils::minutesToHHMM(currentAssignment.mStartMinute) << " - "
                 << Utils::minutesToHHMM(currentAssignment.mStartMinute + currentAssignment.mDuration) << " (" << currentAssignment.mDuration << " mins)"
-                << " | Room " << mRooms[currentAssignment.mRoomId].mTag
-                << " | Student: " << concernedStudent.mName
-                << " | Referent: " << concernedReferentTeacher.mName << (concernedReferentTeacher.mIsTechnical ? " Tech" : "\t")
-                << " | Second: " << concernedSecondTeacher.mName << (concernedSecondTeacher.mIsTechnical ? " Tech\t" : "\t\t")
+                << " | Room " << mRooms[currentAssignment.mRoomId].mId
+                << " | Student: " << concernedStudent.mId
+                << " | Referent: " << concernedReferentTeacher.mId << (concernedReferentTeacher.mIsTechnical ? " Tech" : "\t")
+                << " | Second: " << concernedSecondTeacher.mId << (concernedSecondTeacher.mIsTechnical ? " Tech\t" : "\t\t")
                 << "\n";
     }
 }

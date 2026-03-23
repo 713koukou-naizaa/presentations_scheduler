@@ -74,21 +74,21 @@
     <div role="rowheader" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2 sortable">Blocks</div>
   </div>
   <div class="Box-row Box-row--focus-gray py-2 d-flex">
-    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2"><a href="#l5">Teacher::Teacher(unsigned short, std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, bool) (src/Teacher.cpp:5)</a>    </div>
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2"><a href="#l4">Teacher::Teacher(unsigned short, bool) (src/Teacher.cpp:4)</a>    </div>
     <div role="gridcell" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline" data-sort="0">not called</div>
     <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">0.0%</div>
     <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">-%</div>
     <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">0.0%</div>
   </div>
   <div class="Box-row Box-row--focus-gray py-2 d-flex">
-    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2"><a href="#l18">Teacher::book(unsigned short, Utils::Interval) (src/Teacher.cpp:18)</a>    </div>
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2"><a href="#l17">Teacher::book(unsigned short, Utils::Interval) (src/Teacher.cpp:17)</a>    </div>
     <div role="gridcell" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline" data-sort="0">not called</div>
     <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">0.0%</div>
     <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">0.0%</div>
     <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">0.0%</div>
   </div>
   <div class="Box-row Box-row--focus-gray py-2 d-flex">
-    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2"><a href="#l7">Teacher::isAvailable(unsigned short, Utils::Interval) (src/Teacher.cpp:7)</a>    </div>
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2"><a href="#l6">Teacher::isAvailable(unsigned short, Utils::Interval) (src/Teacher.cpp:6)</a>    </div>
     <div role="gridcell" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline" data-sort="0">not called</div>
     <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">0.0%</div>
     <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">0.0%</div>
@@ -141,157 +141,150 @@
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;utility&gt;</span></td>
+        <td class="src "></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l4" href="#l4">4</a></td>
         <td class="linebranch">
         </td>
-        <td class="linecount"></td>
-        <td class="src "></td>
+        <td class="linecount uncoveredLine show_uncoveredLine">&cross;</td>
+        <td class="src  uncoveredLine show_uncoveredLine"><span class="n">Teacher</span><span class="o">::</span><span class="n">Teacher</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">short</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">pId</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">pIsTechnical</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">mId</span><span class="p">(</span><span class="n">pId</span><span class="p">),</span><span class="w"> </span><span class="n">mIsTechnical</span><span class="p">(</span><span class="n">pIsTechnical</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l5" href="#l5">5</a></td>
         <td class="linebranch">
         </td>
-        <td class="linecount uncoveredLine show_uncoveredLine">&cross;</td>
-        <td class="src  uncoveredLine show_uncoveredLine"><span class="n">Teacher</span><span class="o">::</span><span class="n">Teacher</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">short</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">pId</span><span class="p">,</span><span class="w"> </span><span class="n">string</span><span class="w"> </span><span class="n">pName</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">pIsTechnical</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">mId</span><span class="p">(</span><span class="n">pId</span><span class="p">),</span><span class="w"> </span><span class="n">mName</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">pName</span><span class="p">)),</span><span class="w"> </span><span class="n">mIsTechnical</span><span class="p">(</span><span class="n">pIsTechnical</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span></td>
-      </tr>
-      <tr class="source-line">
-        <td class="lineno"><a id="l6" href="#l6">6</a></td>
-        <td class="linebranch">
-        </td>
         <td class="linecount"></td>
         <td class="src "></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l7" href="#l7">7</a></td>
+        <td class="lineno"><a id="l6" href="#l6">6</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount uncoveredLine show_uncoveredLine">&cross;</td>
         <td class="src  uncoveredLine show_uncoveredLine"><span class="kt">bool</span><span class="w"> </span><span class="n">Teacher</span><span class="o">::</span><span class="n">isAvailable</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">short</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">pDay</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Utils</span><span class="o">::</span><span class="n">Interval</span><span class="w"> </span><span class="n">pSlot</span><span class="p">)</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l8" href="#l8">8</a></td>
+        <td class="lineno"><a id="l7" href="#l7">7</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
         <td class="src "><span class="p">{</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l9" href="#l9">9</a></td>
+        <td class="lineno"><a id="l8" href="#l8">8</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount uncoveredLine show_uncoveredLine">&cross;</td>
         <td class="src  uncoveredLine show_uncoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">mWeeklyRemainingMinutes</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">pSlot</span><span class="p">.</span><span class="n">mEnd</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">pSlot</span><span class="p">.</span><span class="n">mStart</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l10" href="#l10">10</a></td>
+        <td class="lineno"><a id="l9" href="#l9">9</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
         <td class="src "></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l11" href="#l11">11</a></td>
+        <td class="lineno"><a id="l10" href="#l10">10</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount uncoveredLine show_uncoveredLine">&cross;</td>
         <td class="src  uncoveredLine show_uncoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pDay</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">short</span><span class="w"> </span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">mBusyByDay</span><span class="p">.</span><span class="n">size</span><span class="p">()))</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">mBusyByDay</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">pDay</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l12" href="#l12">12</a></td>
+        <td class="lineno"><a id="l11" href="#l11">11</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
         <td class="src "></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l13" href="#l13">13</a></td>
+        <td class="lineno"><a id="l12" href="#l12">12</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount uncoveredLine show_uncoveredLine">&cross;</td>
         <td class="src  uncoveredLine show_uncoveredLine"><span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="n">it</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">mBusyByDay</span><span class="p">[</span><span class="n">pDay</span><span class="p">])</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">it</span><span class="p">.</span><span class="n">overlaps</span><span class="p">(</span><span class="n">pSlot</span><span class="p">))</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l14" href="#l14">14</a></td>
+        <td class="lineno"><a id="l13" href="#l13">13</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
         <td class="src "></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l15" href="#l15">15</a></td>
+        <td class="lineno"><a id="l14" href="#l14">14</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount uncoveredLine show_uncoveredLine">&cross;</td>
         <td class="src  uncoveredLine show_uncoveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l16" href="#l16">16</a></td>
+        <td class="lineno"><a id="l15" href="#l15">15</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
         <td class="src "><span class="p">}</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l17" href="#l17">17</a></td>
+        <td class="lineno"><a id="l16" href="#l16">16</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
         <td class="src "></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l18" href="#l18">18</a></td>
+        <td class="lineno"><a id="l17" href="#l17">17</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount uncoveredLine show_uncoveredLine">&cross;</td>
         <td class="src  uncoveredLine show_uncoveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">Teacher</span><span class="o">::</span><span class="n">book</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">short</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">pDay</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Utils</span><span class="o">::</span><span class="n">Interval</span><span class="w"> </span><span class="n">pSlot</span><span class="p">)</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l19" href="#l19">19</a></td>
+        <td class="lineno"><a id="l18" href="#l18">18</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
         <td class="src "><span class="p">{</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l20" href="#l20">20</a></td>
+        <td class="lineno"><a id="l19" href="#l19">19</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount uncoveredLine show_uncoveredLine">&cross;</td>
         <td class="src  uncoveredLine show_uncoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pDay</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">short</span><span class="w"> </span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">mBusyByDay</span><span class="p">.</span><span class="n">size</span><span class="p">()))</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">mBusyByDay</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">pDay</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l21" href="#l21">21</a></td>
+        <td class="lineno"><a id="l20" href="#l20">20</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
         <td class="src "></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l22" href="#l22">22</a></td>
+        <td class="lineno"><a id="l21" href="#l21">21</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount uncoveredLine show_uncoveredLine">&cross;</td>
         <td class="src  uncoveredLine show_uncoveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">mBusyByDay</span><span class="p">[</span><span class="n">pDay</span><span class="p">].</span><span class="n">push_back</span><span class="p">(</span><span class="n">pSlot</span><span class="p">);</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l23" href="#l23">23</a></td>
+        <td class="lineno"><a id="l22" href="#l22">22</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount uncoveredLine show_uncoveredLine">&cross;</td>
         <td class="src  uncoveredLine show_uncoveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">mWeeklyRemainingMinutes</span><span class="w"> </span><span class="o">-=</span><span class="w"> </span><span class="n">pSlot</span><span class="p">.</span><span class="n">mEnd</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">pSlot</span><span class="p">.</span><span class="n">mStart</span><span class="p">;</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l24" href="#l24">24</a></td>
+        <td class="lineno"><a id="l23" href="#l23">23</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount uncoveredLine show_uncoveredLine">&cross;</td>
         <td class="src  uncoveredLine show_uncoveredLine"><span class="p">}</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l25" href="#l25">25</a></td>
+        <td class="lineno"><a id="l24" href="#l24">24</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
@@ -304,7 +297,7 @@
         <hr class="block-separator"/>
         <footer class="text-center">
           Created using <a href="http://gcovr.com/en/8.6">GCOVR (Version 8.6)</a>
-          at 2026-03-22 13:39:27
+          at 2026-03-23 16:54:43
         </footer>
       </div>
     </div>

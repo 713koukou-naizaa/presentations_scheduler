@@ -1,4 +1,4 @@
-#include "../include/Scheduler.h"
+  #include "../include/Scheduler.h"
 
 #include <gtest/gtest.h>
 #include <vector>
@@ -47,7 +47,7 @@ protected:
 
     for (int i = 0; i < pCount; ++i)
     {
-      Teacher t(i, string("Teacher_") + (i < 10 ? "0": "") + std::to_string(i), TestRNG::randBool(2));
+      Teacher t(i, TestRNG::randBool(2));
       t.mWeeklyRemainingMinutes = 1200;
       teachers.push_back(t);
     }
@@ -62,7 +62,7 @@ protected:
 
     for (int i = 0; i < pStudentCount; ++i)
     {
-      Student currentStudent(i, string("Student_") + (i < 10 ? "0": "") + std::to_string(i), SchedulerTest::TestRNG::randBool(4), 0, SchedulerTest::TestRNG::randInt(0, std::max(0, pTeacherCount - 1)));
+      Student currentStudent(i, SchedulerTest::TestRNG::randBool(4), 0, SchedulerTest::TestRNG::randInt(0, std::max(0, pTeacherCount - 1)));
       currentStudent.mEffectivePresentationLength = currentStudent.mHasAccommodations ? GLOBAL_CONFIG.ACCOMMODATED_PRESENTATION_LENGTH : GLOBAL_CONFIG.NORMAL_PRESENTATION_LENGTH;
       students.push_back(currentStudent);
     }
@@ -77,7 +77,7 @@ protected:
 
     for (int i = 0; i < pCount; ++i)
     {
-      Room currentRoom(i, string("Room_") + (i < 10 ? "0": "") + std::to_string(i));
+      Room currentRoom(i, string("Room_") + (i < 10 ? "0" + std::to_string(i) : std::to_string(i)));
       rooms.push_back(currentRoom);
     }
 

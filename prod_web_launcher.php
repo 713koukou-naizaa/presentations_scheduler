@@ -3,14 +3,14 @@
 function generateTeachers(int $count = 15): array
 {
     $teachers = [];
-    for ($i = 0; $i < $count; $i++) { $teachers[] = ["id" => $i, "name" => sprintf("Teacher_%02d", $i), "isTechnical" => (mt_rand(0, 1) === 1), "weeklyRemainingMinutes" => 1200]; }
+    for ($i = 0; $i < $count; $i++) { $teachers[] = ["id" => $i, "isTechnical" => (mt_rand(0, 1) === 1), "weeklyRemainingMinutes" => 1200]; }
     return $teachers;
 }
 
 function generateStudents(int $count = 60, int $teacherCount = 15): array
 {
     $students = [];
-    for ($i = 0; $i < $count; $i++) { $students[] = ["id" => $i, "name" => sprintf("Student_%02d", $i), "hasAccommodations" => (mt_rand(1, 4) === 1), "referentTeacherId" => mt_rand(0, max(0, $teacherCount - 1))]; }
+    for ($i = 0; $i < $count; $i++) { $students[] = ["id" => $i, "hasAccommodations" => (mt_rand(1, 4) === 1), "referentTeacherId" => mt_rand(0, max(0, $teacherCount - 1))]; }
     return $students;
 }
 
@@ -63,15 +63,15 @@ $stdinContent = json_encode($stdinStudents) . "\n"
               . json_encode($stdinTeachers) . "\n"
               . json_encode($stdinRooms) . "\n";
 
+$stdinContent = '[{"id":583303,"hasAccommodations":false,"referentTeacherId":6,"tutorId":4},{"id":610000,"hasAccommodations":false,"referentTeacherId":2,"tutorId":1},{"id":610001,"hasAccommodations":false,"referentTeacherId":6,"tutorId":2},{"id":610459,"hasAccommodations":false,"referentTeacherId":6,"tutorId":5},{"id":611107,"hasAccommodations":false,"referentTeacherId":2,"tutorId":4},{"id":613453,"hasAccommodations":false,"referentTeacherId":7,"tutorId":6},{"id":641110,"hasAccommodations":false,"referentTeacherId":5,"tutorId":6},{"id":641353,"hasAccommodations":false,"referentTeacherId":2,"tutorId":2},{"id":641387,"hasAccommodations":false,"referentTeacherId":5,"tutorId":7},{"id":700005,"hasAccommodations":false,"referentTeacherId":4,"tutorId":6},{"id":700006,"hasAccommodations":false,"referentTeacherId":1,"tutorId":7},{"id":700008,"hasAccommodations":false,"referentTeacherId":6,"tutorId":2},{"id":700009,"hasAccommodations":false,"referentTeacherId":4,"tutorId":2},{"id":700010,"hasAccommodations":false,"referentTeacherId":2,"tutorId":2},{"id":700012,"hasAccommodations":false,"referentTeacherId":6,"tutorId":2},{"id":700014,"hasAccommodations":false,"referentTeacherId":5,"tutorId":6},{"id":700021,"hasAccommodations":false,"referentTeacherId":1,"tutorId":1},{"id":700022,"hasAccommodations":false,"referentTeacherId":1,"tutorId":3},{"id":700023,"hasAccommodations":false,"referentTeacherId":3,"tutorId":2},{"id":700026,"hasAccommodations":false,"referentTeacherId":7,"tutorId":7},{"id":700028,"hasAccommodations":false,"referentTeacherId":1,"tutorId":3},{"id":700031,"hasAccommodations":false,"referentTeacherId":1,"tutorId":1},{"id":700036,"hasAccommodations":false,"referentTeacherId":7,"tutorId":7},{"id":700038,"hasAccommodations":false,"referentTeacherId":4,"tutorId":5},{"id":700041,"hasAccommodations":false,"referentTeacherId":6,"tutorId":2},{"id":700047,"hasAccommodations":false,"referentTeacherId":2,"tutorId":2},{"id":700048,"hasAccommodations":false,"referentTeacherId":1,"tutorId":4},{"id":700049,"hasAccommodations":false,"referentTeacherId":7,"tutorId":4}]
+                [{"id":1,"isTechnical":true},{"id":2,"isTechnical":true},{"id":3,"isTechnical":true},{"id":4,"isTechnical":true},{"id":5,"isTechnical":true},{"id":6,"isTechnical":true},{"id":7,"isTechnical":true}]
+                [{"id":124},{"id":125},{"id":126},{"id":127},{"id":129},{"id":131}]';
+
 $descriptorSpecs = [
     0 => ['pipe', 'r'], // stdin
     1 => ['pipe', 'w'], // stdout
     2 => ['pipe', 'w']  // stderr
 ];
-
-$startMem = memory_get_usage(true);
-$startCPU = getrusage();
-$startTime = microtime(true);
 
 $process = proc_open($cmd, $descriptorSpecs, $pipes);
 
@@ -103,13 +103,3 @@ if ($returnStatus != 0)
 }
 
 if (strlen($stdout) > 0) { foreach (preg_split("/\r\n|\n|\r/", trim($stdout)) as $line) { echo $line . "\n"; } }
-
-$endTime = microtime(true);
-$endCPU = getrusage();
-$endMem = memory_get_usage(true);
-$peakMem = memory_get_peak_usage(true);
-
-echo "\nTime: " . ($endTime - $startTime) . "s\n";
-echo "Memory used: " . ($endMem - $startMem) . " bytes\n";
-echo "Peak memory: " . $peakMem . " bytes\n";
-echo "CPU user time: " . ($endCPU["ru_utime.tv_sec"] - $startCPU["ru_utime.tv_sec"]) . "s\n";

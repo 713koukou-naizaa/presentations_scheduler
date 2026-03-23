@@ -1,8 +1,7 @@
 #include "Teacher.h"
 
-#include <utility>
 
-Teacher::Teacher(const unsigned short int pId, string pName, const bool pIsTechnical) : mId(pId), mName(std::move(pName)), mIsTechnical(pIsTechnical) {}
+Teacher::Teacher(const unsigned short int pId, const bool pIsTechnical) : mId(pId), mIsTechnical(pIsTechnical) {}
 
 bool Teacher::isAvailable(const unsigned short int pDay, const Utils::Interval pSlot)
 {

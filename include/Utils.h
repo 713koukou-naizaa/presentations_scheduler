@@ -27,7 +27,13 @@ struct Utils
 
     static string minutesToHHMM(unsigned short int);
 
-    template<typename T> static int findIndexById(const vector<T> &, unsigned int );
+    template<typename T> static int findIndexById(const vector<T> &pVector, unsigned int pId)
+    {
+        for (size_t i = 0; i < pVector.size(); i++)
+            if (pVector[i].mId == pId) return static_cast<int>(i);
+
+        return -1;
+    }
 
     static void printParameters();
 

@@ -74,7 +74,7 @@
     <div role="rowheader" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">Blocks</div>
   </div>
   <div class="Box-row Box-row--focus-gray py-2 d-flex">
-    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2"><a href="#l6">Student::Student(unsigned int, std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, bool, unsigned short, unsigned short) (src/Student.cpp:6)</a>    </div>
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2"><a href="#l4">Student::Student(unsigned int, bool, unsigned short, unsigned short) (src/Student.cpp:4)</a>    </div>
     <div role="gridcell" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline" data-sort="0">not called</div>
     <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">0.0%</div>
     <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">-%</div>
@@ -127,31 +127,17 @@
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;utility&gt;</span></td>
+        <td class="src "></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l4" href="#l4">4</a></td>
         <td class="linebranch">
         </td>
-        <td class="linecount"></td>
-        <td class="src "></td>
+        <td class="linecount uncoveredLine show_uncoveredLine">&cross;</td>
+        <td class="src  uncoveredLine show_uncoveredLine"><span class="n">Student</span><span class="o">::</span><span class="n">Student</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">pId</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">pHasAccommodations</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">short</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">pEffectivePresentationLength</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">short</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">pReferentTeacherId</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">mId</span><span class="p">(</span><span class="n">pId</span><span class="p">),</span><span class="w"> </span><span class="n">mHasAccommodations</span><span class="p">(</span><span class="n">pHasAccommodations</span><span class="p">),</span><span class="w"> </span><span class="n">mEffectivePresentationLength</span><span class="p">(</span><span class="n">pEffectivePresentationLength</span><span class="p">),</span><span class="w"> </span><span class="n">mReferentTeacherId</span><span class="p">(</span><span class="n">pReferentTeacherId</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l5" href="#l5">5</a></td>
-        <td class="linebranch">
-        </td>
-        <td class="linecount"></td>
-        <td class="src "></td>
-      </tr>
-      <tr class="source-line">
-        <td class="lineno"><a id="l6" href="#l6">6</a></td>
-        <td class="linebranch">
-        </td>
-        <td class="linecount uncoveredLine show_uncoveredLine">&cross;</td>
-        <td class="src  uncoveredLine show_uncoveredLine"><span class="n">Student</span><span class="o">::</span><span class="n">Student</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">pId</span><span class="p">,</span><span class="w"> </span><span class="n">string</span><span class="w"> </span><span class="n">pName</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">pHasAccommodations</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">short</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">pEffectivePresentationLength</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">short</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">pReferentTeacherId</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">mId</span><span class="p">(</span><span class="n">pId</span><span class="p">),</span><span class="w"> </span><span class="n">mName</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">pName</span><span class="p">)),</span><span class="w"> </span><span class="n">mHasAccommodations</span><span class="p">(</span><span class="n">pHasAccommodations</span><span class="p">),</span><span class="w"> </span><span class="n">mEffectivePresentationLength</span><span class="p">(</span><span class="n">pEffectivePresentationLength</span><span class="p">),</span><span class="w"> </span><span class="n">mReferentTeacherId</span><span class="p">(</span><span class="n">pReferentTeacherId</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span></td>
-      </tr>
-      <tr class="source-line">
-        <td class="lineno"><a id="l7" href="#l7">7</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
@@ -164,7 +150,7 @@
         <hr class="block-separator"/>
         <footer class="text-center">
           Created using <a href="http://gcovr.com/en/8.6">GCOVR (Version 8.6)</a>
-          at 2026-03-22 13:39:27
+          at 2026-03-23 16:54:43
         </footer>
       </div>
     </div>

@@ -2,6 +2,5 @@
 
 #include <utility>
 
-#include "config.h"
 
-Room::Room(const int pId, string pTag) : mId(pId), mTag(std::move(pTag)) {}
+Room::Room(const unsigned short int pId, string pTag) : mId(pId), mTag(std::move(pTag)) {}

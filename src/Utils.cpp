@@ -13,6 +13,7 @@
 using std::cout;
 using std::endl;
 
+
 void Utils::setGlobalConfig(const unsigned short int pStartMorningTime, const unsigned short int pEndMorningTime, const unsigned short int pStartAfternoonTime, const unsigned short int pEndAfternoonTime, const unsigned short int pNormalPresentationLength, const unsigned short int pAccommodatedPresentationLength, const unsigned short int pInBetweenBreakLength, const unsigned short int pMaxTeachersWeeklyWorkedTime, const unsigned short int pNbStudents, const unsigned short int pNbTeachers, const unsigned short int pNbRooms)
 {
     GLOBAL_CONFIG.START_MORNING_TIME = pStartMorningTime;
@@ -38,19 +39,19 @@ void Utils::displayVectors(const vector<Student> &pStudents, const vector<Teache
     cout << "Students: " << endl;
     for (const auto &student : pStudents)
     {
-        cout << "\t" << student.mId << " " << student.mName << " " << student.mHasAccommodations << " " << student.mEffectivePresentationLength << " " << student.mReferentTeacherId << endl;
+        cout << "\t" << student.mId << " " << student.mHasAccommodations << " " << student.mEffectivePresentationLength << " " << student.mReferentTeacherId << endl;
     }
 
     cout << "Teachers: " << endl;
     for (const auto &teacher : pTeachers)
     {
-        cout << "\t" << teacher.mId << " " << teacher.mName << " " << teacher.mIsTechnical << " " << teacher.mWeeklyRemainingMinutes << endl;
+        cout << "\t" << teacher.mId << " " << teacher.mIsTechnical << " " << teacher.mWeeklyRemainingMinutes << endl;
     }
 
     cout << "Rooms: " << endl;
     for (const auto &room : pRooms)
     {
-        cout << "\t" << room.mId << " " << room.mTag << endl;
+        cout << "\t" << room.mId << endl;
     }
 }
 // GCOVR_EXCL_STOP
@@ -82,7 +83,6 @@ vector<Student> Utils::loadStudentsFromStdin()
     for (const auto &currentJsonItem : jsonInstance)
     {
         Student currentStudent(currentJsonItem.at("id").get<unsigned int>(),
-                               currentJsonItem.at("name").get<string>(),
                                currentJsonItem.at("hasAccommodations").get<bool>(),
                                currentJsonItem.at("hasAccommodations").get<bool>() ? GLOBAL_CONFIG.ACCOMMODATED_PRESENTATION_LENGTH : GLOBAL_CONFIG.NORMAL_PRESENTATION_LENGTH,
                                currentJsonItem.at("referentTeacherId").get<unsigned short int>());
@@ -103,7 +103,6 @@ vector<Teacher> Utils::loadTeachersFromStdin()
     for (const auto &currentJsonItem : jsonInstance)
     {
         Teacher currentTeacher(currentJsonItem.at("id").get<unsigned short int>(),
-                               currentJsonItem.at("name").get<string>(),
                                currentJsonItem.at("isTechnical").get<bool>());
 
         teachers.push_back(currentTeacher);
@@ -122,7 +121,7 @@ vector<Room> Utils::loadRoomsFromStdin()
     for (const auto &currentJsonItem : jsonInstance)
     {
         Room currentRoom(currentJsonItem.at("id").get<unsigned short int>(),
-                         currentJsonItem.at("tag").get<string>());
+                        currentJsonItem.at("tag").get<string>());
 
         rooms.push_back(currentRoom);
     }
@@ -137,15 +136,6 @@ string Utils::minutesToHHMM(const unsigned short int pMinutes)
     char buf[8];
     (void)snprintf(buf, sizeof(buf), "%02d:%02d", hh, mm);
     return buf;
-}
-
-// Helper to find index in vector<T> where item.mId == pId, return -1 if not found
-template<typename T> int Utils::findIndexById(const vector<T> &pVector, unsigned int pId)
-{
-    for (size_t i = 0; i < pVector.size(); i++)
-        if (pVector[i].mId == pId) return static_cast<int>(i);
-
-    return -1;
 }
 
 // GCOVR_EXCL_START
