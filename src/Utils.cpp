@@ -139,6 +139,15 @@ string Utils::minutesToHHMM(const unsigned short int pMinutes)
     return buf;
 }
 
+// Helper to find index in vector<T> where item.mId == pId, return -1 if not found
+template<typename T> int Utils::findIndexById(const vector<T> &pVector, unsigned int pId)
+{
+    for (size_t i = 0; i < pVector.size(); i++)
+        if (pVector[i].mId == pId) return static_cast<int>(i);
+
+    return -1;
+}
+
 // GCOVR_EXCL_START
 void Utils::printParameters()
 {

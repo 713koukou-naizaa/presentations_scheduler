@@ -27,6 +27,8 @@ struct Utils
 
     static string minutesToHHMM(unsigned short int);
 
+    template<typename T> static int findIndexById(const vector<T> &, unsigned int );
+
     static void printParameters();
 
     struct Interval

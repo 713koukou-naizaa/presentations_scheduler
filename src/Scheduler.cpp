@@ -8,31 +8,8 @@ using namespace std;
 using std::cout;
 using std::endl;
 
-// Helper to find index in vector<T> where item.mId == pId, return -1 if not found
-template<typename T>
-static int findIndexById(const vector<T> &pVector, unsigned int pId)
-{
-    for (size_t i = 0; i < pVector.size(); i++)
-        if (pVector[i].mId == pId) return static_cast<int>(i);
-
-    return -1;
-}
 
 Scheduler::Scheduler(vector<Student> pStudents, vector<Teacher> pTeachers, vector<Room> pRooms) : mStudents(std::move(pStudents)), mTeachers(std::move(pTeachers)), mRooms(std::move(pRooms)) {}
-
-// Ensure internal per-day containers are big enough
-void Scheduler::ensureDayCapacity(const unsigned short int pDay) {
-    for(auto &currentRoom : mRooms)
-    {
-        if (static_cast<unsigned short int>(currentRoom.mMorningPointerByDay.size()) <= pDay)
-        {
-            currentRoom.mMorningPointerByDay.resize(pDay+1, GLOBAL_CONFIG.START_MORNING_TIME);
-            currentRoom.mAfternoonPointerByDay.resize(pDay+1, GLOBAL_CONFIG.START_AFTERNOON_TIME);
-        }
-    }
-
-    for(auto &currentTeacher : this->mTeachers) { if (static_cast<unsigned short int>(currentTeacher.mBusyByDay.size()) <= pDay) currentTeacher.mBusyByDay.resize(pDay+1); }
-}
 
 // Try to schedule all students with greedy earliest-fit, it creates additional days if needed.
 // Improved scheduling algorithm: use three queues (toScheduleStudents, sameDay, toRetrySchedulingNextWeekStudents)
@@ -116,7 +93,7 @@ Scheduler::TrySchedulingResultOptions Scheduler::tryScheduleStudentAtSlotAtDayAt
 
     // Referent teacher
     const unsigned short int correspondingReferentId = studentToTryScheduling.mReferentTeacherId;
-    const int correspondingReferentIdx = findIndexById(this->mTeachers, correspondingReferentId);
+    const int correspondingReferentIdx = Utils::findIndexById(this->mTeachers, correspondingReferentId);
     if (correspondingReferentIdx < 0) return TrySchedulingResultOptions::NOT_POSSIBLE; // malformed input
     Teacher &correspondingReferent = this->mTeachers[static_cast<size_t>(correspondingReferentIdx)];
 
@@ -152,32 +129,21 @@ Scheduler::TrySchedulingResultOptions Scheduler::tryScheduleStudentAtSlotAtDayAt
         return TrySchedulingResultOptions::NEXT_WEEK;
     }
 
-    // TODO : Is this really optimal ?
-    // Choose candidate to even out weekly remaining minutes:
-    // compute mean remaining minutes after assigning both teachers, and pick candidate whose remaining after assignment
-    // is closest to that mean. Tie-breaker: pick teacher with larger remaining minutes.
-    // Not simply picking the candidate with the most remaining minutes, because that would lead to a lopsided distribution
-    // of remaining minutes if the candidates ever have different maximum weekly worked times.
-    long totalRemainingMinutes = 0;
-    for (const auto &currentTeacher : this->mTeachers) totalRemainingMinutes += currentTeacher.mWeeklyRemainingMinutes;
-    const double totalRemainingMinutesAfterAssignment = static_cast<double>(totalRemainingMinutes) - 2.0 * static_cast<double>(currentStudentPresentationDuration);
-    const double meanRemainingMinutesAfterAssignment = totalRemainingMinutesAfterAssignment / static_cast<double>(this->mTeachers.size());
-
-    double bestDifference = 1e18;
-    int finalBestCandidate = secondPossibleCandidates[0];
-    int bestRemainingMinutes = 0;
+    double bestScore = -1.0;
+    int bestCandidate = -1;
     for (const auto currentCandidateIdx : secondPossibleCandidates)
     {
-        const auto currentCandidateRemainingMinutesAfterAssignment = this->mTeachers[currentCandidateIdx].mWeeklyRemainingMinutes - currentStudentPresentationDuration;
-        const double currentCandidateDifference = std::fabs(static_cast<double>(currentCandidateRemainingMinutesAfterAssignment) - meanRemainingMinutesAfterAssignment);
-        if (currentCandidateDifference < bestDifference || (std::fabs(currentCandidateDifference - bestDifference) < 1e-9 && this->mTeachers[currentCandidateIdx].mWeeklyRemainingMinutes > bestRemainingMinutes))
+        const Teacher &candidateTeacher = mTeachers[currentCandidateIdx];
+
+        const double remainingAfterAssignment = candidateTeacher.mWeeklyRemainingMinutes - currentStudentPresentationDuration;
+        const double score = remainingAfterAssignment / static_cast<double>(GLOBAL_CONFIG.MAX_TEACHERS_WEEKLY_WORKED_TIME);
+        if (score > bestScore)
         {
-            bestDifference = currentCandidateDifference;
-            finalBestCandidate = currentCandidateIdx;
-            bestRemainingMinutes = this->mTeachers[currentCandidateIdx].mWeeklyRemainingMinutes;
+            bestScore = score;
+            bestCandidate = currentCandidateIdx;
         }
     }
-    const unsigned short int chosenSecondTeacherCandidateIdx = finalBestCandidate;
+    const unsigned short int chosenSecondTeacherCandidateIdx = bestCandidate;
 
     // Book teachers
     correspondingReferent.book(currentDay, currentSlot);
@@ -204,6 +170,20 @@ Scheduler::TrySchedulingResultOptions Scheduler::tryScheduleStudentAtSlotAtDayAt
     }
 
     return TrySchedulingResultOptions::SCHEDULED;
+}
+
+// Ensure internal per-day containers are big enough
+void Scheduler::ensureDayCapacity(const unsigned short int pDay) {
+    for(auto &currentRoom : mRooms)
+    {
+        if (static_cast<unsigned short int>(currentRoom.mMorningPointerByDay.size()) <= pDay)
+        {
+            currentRoom.mMorningPointerByDay.resize(pDay+1, GLOBAL_CONFIG.START_MORNING_TIME);
+            currentRoom.mAfternoonPointerByDay.resize(pDay+1, GLOBAL_CONFIG.START_AFTERNOON_TIME);
+        }
+    }
+
+    for(auto &currentTeacher : this->mTeachers) { if (static_cast<unsigned short int>(currentTeacher.mBusyByDay.size()) <= pDay) currentTeacher.mBusyByDay.resize(pDay+1); }
 }
 
 // Try to schedule all students until the time window is full
@@ -287,34 +267,6 @@ void Scheduler::removeStudentFromAllVectors(vector<unsigned short int> &toSchedu
 void Scheduler::removeStudentFromVector(vector<unsigned short int> &vectorToRemoveFrom, const unsigned short int &toRemoveStudentIdx)
 { vectorToRemoveFrom.erase(std::remove(vectorToRemoveFrom.begin(), vectorToRemoveFrom.end(), toRemoveStudentIdx), vectorToRemoveFrom.end()); }
 
-// GCOVR_EXCL_START
-// Print final schedule
-void Scheduler::printSchedule()
-{
-    // Sort assignments by day, start time
-    sort(this->mAssignments.begin(), this->mAssignments.end(), [](const Presentation &assignmentOne, const Presentation &assignmentTwo) {
-        if (assignmentOne.mDay != assignmentTwo.mDay) return assignmentOne.mDay < assignmentTwo.mDay;
-        if (assignmentOne.mStartMinute != assignmentTwo.mStartMinute) return assignmentOne.mStartMinute < assignmentTwo.mStartMinute;
-        return assignmentOne.mRoomId < assignmentTwo.mRoomId;
-    });
-
-    cout << "Full schedule (" << this->mAssignments.size() << " presentations):\n";
-    for(const auto &currentAssignment : this->mAssignments)
-    {
-        const Student &concernedStudent = this->mStudents[currentAssignment.mStudentId];
-        const Teacher &concernedReferentTeacher = this->mTeachers[currentAssignment.mReferentTeacherId];
-        const Teacher &concernedSecondTeacher = this->mTeachers[currentAssignment.mSecondTeacherId];
-        cout << "Day " << currentAssignment.mDay+1 << " | " << Utils::minutesToHHMM(currentAssignment.mStartMinute) << " - "
-                << Utils::minutesToHHMM(currentAssignment.mStartMinute + currentAssignment.mDuration) << " (" << currentAssignment.mDuration << " mins)"
-                << " | Room " << mRooms[currentAssignment.mRoomId].mTag
-                << " | Student: " << concernedStudent.mName
-                << " | Referent: " << concernedReferentTeacher.mName << (concernedReferentTeacher.mIsTechnical ? " Tech" : "\t")
-                << " | Second: " << concernedSecondTeacher.mName << (concernedSecondTeacher.mIsTechnical ? " Tech\t" : "\t\t")
-                << "\n";
-    }
-}
-// GCOVR_EXCL_STOP
-
 // Output final schedule to a JSON file
 string Scheduler::outputJSONResult() const
 {
@@ -343,4 +295,33 @@ string Scheduler::outputJSONResult() const
 
     return schedule.dump();
 }
+
+// GCOVR_EXCL_START
+// Print final schedule
+void Scheduler::printSchedule()
+{
+    // Sort assignments by day, start time
+    sort(this->mAssignments.begin(), this->mAssignments.end(), [](const Presentation &assignmentOne, const Presentation &assignmentTwo) {
+        if (assignmentOne.mDay != assignmentTwo.mDay) return assignmentOne.mDay < assignmentTwo.mDay;
+        if (assignmentOne.mStartMinute != assignmentTwo.mStartMinute) return assignmentOne.mStartMinute < assignmentTwo.mStartMinute;
+        return assignmentOne.mRoomId < assignmentTwo.mRoomId;
+    });
+
+    cout << "Full schedule (" << this->mAssignments.size() << " presentations):\n";
+    for(const auto &currentAssignment : this->mAssignments)
+    {
+        const Student &concernedStudent = this->mStudents[currentAssignment.mStudentId];
+        const Teacher &concernedReferentTeacher = this->mTeachers[currentAssignment.mReferentTeacherId];
+        const Teacher &concernedSecondTeacher = this->mTeachers[currentAssignment.mSecondTeacherId];
+        cout << "Day " << currentAssignment.mDay+1 << " | " << Utils::minutesToHHMM(currentAssignment.mStartMinute) << " - "
+                << Utils::minutesToHHMM(currentAssignment.mStartMinute + currentAssignment.mDuration) << " (" << currentAssignment.mDuration << " mins)"
+                << " | Room " << mRooms[currentAssignment.mRoomId].mTag
+                << " | Student: " << concernedStudent.mName
+                << " | Referent: " << concernedReferentTeacher.mName << (concernedReferentTeacher.mIsTechnical ? " Tech" : "\t")
+                << " | Second: " << concernedSecondTeacher.mName << (concernedSecondTeacher.mIsTechnical ? " Tech\t" : "\t\t")
+                << "\n";
+    }
+}
+// GCOVR_EXCL_STOP
+
 
