@@ -1,6 +1,6 @@
 CXX = g++
 CXXFLAGS = -Wall -std=c++17 -Iinclude
-LDFLAGS = -static
+LDFLAGS = -static -static-libgcc -static-libstdc++
 
 CXXFLAGS_COV = $(CXXFLAGS) -fprofile-arcs -ftest-coverage
 LDFLAGS_COV = $(LDFLAGS) -lgcov
