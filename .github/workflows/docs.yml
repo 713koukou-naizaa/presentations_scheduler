@@ -6,13 +6,13 @@ permissions:
 on:
   push:
     branches:
-      - feat/addDoxygenDoc
+      - main
   pull_request:
     branches:
       - main
 
 jobs:
-  doxygen:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -20,6 +20,23 @@ jobs:
         run: sudo apt-get install -y doxygen graphviz
       - name: Generate Documentation
         run: doxygen Doxyfile
+      - name: Upload Docs Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: doxygen-docs
+          path: docs/html
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Download Docs Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: doxygen-docs
+          path: docs/html
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4.0.0
         with:
