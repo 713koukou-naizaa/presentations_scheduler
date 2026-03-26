@@ -42,7 +42,9 @@ struct Scheduler
     Scheduler(vector<Student> pStudents, vector<Teacher> pTeachers, vector<Room> pRooms);
 
     /**
-     * @brief Ensures that the schedule has enough days to try scheduling a student on the given day, by adding new days if needed
+     * @brief Ensures the rooms and teacher's day pointers have the correct size for the given day.
+     * For each room, resize the morning and afternoon pointer vectors if their size is lesser or equal to the given day
+     * For each teacher, resize the busyByDay vector if its size is lesser or equal to the given day
      *
      * @param pDay The day for which to ensure capacity (0-based)
      *
@@ -52,6 +54,7 @@ struct Scheduler
 
     /**
      * @brief Tries to schedule all students
+     *
      *
      * @return bool True if all students were scheduled, false otherwise
      */

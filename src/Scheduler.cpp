@@ -11,11 +11,25 @@ using std::endl;
 
 Scheduler::Scheduler(vector<Student> pStudents, vector<Teacher> pTeachers, vector<Room> pRooms) : mStudents(std::move(pStudents)), mTeachers(std::move(pTeachers)), mRooms(std::move(pRooms)) {}
 
+/*
+INITIALIZATION
+Prepare vector of students index (to schedule, to retry scheduling same day, to retry scheduling next week)
+Initialize current day to 0, week to 1 and latest week number to 0
+Initialize day capacity for day 0
+
+MAIN LOOP
+While all vectors aren't empty :
+ - If we advanced to a new week (latest week number < current week), update students to retry scheduling same day and next week
+ - Initialize day capacity for current day
+ - For each room :
+  - Try scheduling students the morning until full, and then afternoon until full
+ - End of day, advance to new day
+ - If current day % 5, new week, so update week and reset teachers weekly remaining minutes
+ - If no progress was made this day, move remaining students to retry scheduling same day to students to retry scheduling next week
+return true once all students have been scheduled
+*/
 bool Scheduler::scheduleAll()
 {
-    // Initialize per-day capacity for day 0
-    ensureDayCapacity(0);
-
     // Prepare students to schedule vector using student indices
     vector<unsigned short int> toScheduleStudents;
     toScheduleStudents.reserve(this->mStudents.size());
@@ -27,6 +41,9 @@ bool Scheduler::scheduleAll()
     unsigned short int dayNumber = 0;
     unsigned short int weekNumber = 1;
     unsigned short int latestWeekNumber = 0;
+
+    // Initialize per-day capacity for day 0
+    ensureDayCapacity(dayNumber);
 
     // Loop until all lists empty
     while (!toScheduleStudents.empty() || !toRetrySchedulingSameDay.empty() || !toRetrySchedulingNextWeekStudents.empty())
@@ -77,6 +94,102 @@ bool Scheduler::scheduleAll()
     return true;
 }
 
+void Scheduler::trySchedulingUntilTimeWindowFull(const unsigned short dayNumber, const unsigned short int currentRoomIdx,
+    int& startTime, const int endTime,
+    std::vector<unsigned short int>& toRetrySchedulingSameDay, std::vector<unsigned short int>& toScheduleStudents, std::vector<unsigned short int>& toRetrySchedulingNextWeekStudents,
+    bool& madeProgressThisDay)
+{
+    while (true)
+    {
+        if (startTime + 1 > endTime) break;
+
+        bool scheduledOne = false;
+
+        for (auto* currentQueuePtr : { &toRetrySchedulingSameDay, &toScheduleStudents })
+        {
+            auto& currentQueue = *currentQueuePtr;
+
+            for (size_t idx = 0; idx < currentQueue.size(); ++idx)
+            {
+                const unsigned short currentStudentIdx = currentQueue[idx];
+                const unsigned short int duration = this->mStudents[currentStudentIdx].mEffectivePresentationLength;
+                Utils::Interval slot{static_cast<unsigned short int>(startTime), static_cast<unsigned short int>(startTime + duration)};
+
+                if (slot.mEnd > static_cast<unsigned short int>(endTime))
+                {
+                    if (std::find(toRetrySchedulingSameDay.begin(), toRetrySchedulingSameDay.end(), currentStudentIdx) == toRetrySchedulingSameDay.end())
+                        toRetrySchedulingSameDay.push_back(currentStudentIdx);
+                    continue;
+                }
+
+                const TrySchedulingResultOptions TrySchedulingAfternoonResult = this->tryScheduleStudentAtSlotAtDayAtRoom(currentStudentIdx, dayNumber, slot, static_cast<unsigned short int>(currentRoomIdx));
+
+                if (TrySchedulingAfternoonResult == SCHEDULED)
+                {
+                    Scheduler::removeStudentFromAllVectors(toScheduleStudents, toRetrySchedulingSameDay, toRetrySchedulingNextWeekStudents, currentStudentIdx);
+                    scheduledOne = true;
+                    madeProgressThisDay = true;
+                    // update startTime from room pointers to reflect the booking
+                    ensureDayCapacity(dayNumber);
+                    Room &currentUsedRoom = mRooms[currentRoomIdx];
+                    // prefer morning or afternoon pointer that matches the slot
+                    if (slot.mStart >= GLOBAL_CONFIG.START_MORNING_TIME && slot.mEnd <= GLOBAL_CONFIG.END_MORNING_TIME)
+                        startTime = currentUsedRoom.mMorningPointerByDay[dayNumber];
+                    else if (slot.mStart >= GLOBAL_CONFIG.START_AFTERNOON_TIME && slot.mEnd <= GLOBAL_CONFIG.END_AFTERNOON_TIME)
+                        startTime = currentUsedRoom.mAfternoonPointerByDay[dayNumber];
+                    break;
+                }
+
+                if (TrySchedulingAfternoonResult == SAME_DAY)
+                {
+                    if (std::find(toRetrySchedulingSameDay.begin(), toRetrySchedulingSameDay.end(), currentStudentIdx) == toRetrySchedulingSameDay.end())
+                        toRetrySchedulingSameDay.push_back(currentStudentIdx);
+                }
+                else if (TrySchedulingAfternoonResult == NEXT_WEEK)
+                {
+                    if (std::find(toRetrySchedulingNextWeekStudents.begin(), toRetrySchedulingNextWeekStudents.end(), currentStudentIdx) == toRetrySchedulingNextWeekStudents.end())
+                        toRetrySchedulingNextWeekStudents.push_back(currentStudentIdx);
+
+                    currentQueue.erase(currentQueue.begin() + idx);
+                    --idx;
+                }
+            }
+
+            if (scheduledOne) break;
+        }
+
+        if (!scheduledOne) break;
+    }
+}
+
+/*
+CHECKS CHAIN
+Get current student from its index
+Get the corresponding student's presentation duration
+Check if the slot fits in either the morning or afternoon windows, if not, return TrySchedulingResultOptions::SAME_DAY
+
+Get the corresponding referent teacher
+Check if the referent teacher has enough weekly remaining minutes, if not, return TrySchedulingResultOptions::NEXT_WEEK
+Check if referent teacher is available at this time, if not, return TrySchedulingResultOptions::SAME_DAY
+
+Find second teacher candidates :
+- Have to be technical if the referent is not
+- Have to have enough weekly remaining minutes
+- Have to be available at this time
+
+If no candidates were found :
+- If a candidate didn't have enough weekly remaining minutes, return TrySchedulingResultOptions::NEXT_WEEK
+- If a candidate wasn't available at the time, return TrySchedulingResultOptions::SAME_DAY
+- Else (technicality constraint not fulfilled or no other teacher), return TrySchedulingResultOptions::NEXT_WEEK
+Choose best candidate based on all the candidates ratio of remaining time after assignment on max teachers weekly worked time (choose the one with the highest)
+
+Book the teachers (referent and second teacher)
+Record the assignment
+
+Advance the room pointer for that day
+
+return TrySchedulingResultOptions::SCHEDULED
+*/
 Scheduler::TrySchedulingResultOptions Scheduler::tryScheduleStudentAtSlotAtDayAtRoom(const unsigned short int &currentStudentIdx, const unsigned short int &currentDay, const Utils::Interval &currentSlot, const unsigned short int &currentRoomId)
 {
     const Student &studentToTryScheduling = this->mStudents[currentStudentIdx];
@@ -180,74 +293,6 @@ void Scheduler::ensureDayCapacity(const unsigned short int pDay)
     }
 
     for(auto &currentTeacher : this->mTeachers) { if (static_cast<unsigned short int>(currentTeacher.mBusyByDay.size()) <= pDay) currentTeacher.mBusyByDay.resize(pDay+1); }
-}
-
-void Scheduler::trySchedulingUntilTimeWindowFull(const unsigned short dayNumber, const unsigned short int currentRoomIdx,
-    int& startTime, const int endTime,
-    std::vector<unsigned short int>& toRetrySchedulingSameDay, std::vector<unsigned short int>& toScheduleStudents, std::vector<unsigned short int>& toRetrySchedulingNextWeekStudents,
-    bool& madeProgressThisDay)
-{
-    while (true)
-    {
-        if (startTime + 1 > endTime) break;
-
-        bool scheduledOne = false;
-
-        for (auto* currentQueuePtr : { &toRetrySchedulingSameDay, &toScheduleStudents })
-        {
-            auto& currentQueue = *currentQueuePtr;
-
-            for (size_t idx = 0; idx < currentQueue.size(); ++idx)
-            {
-                const unsigned short currentStudentIdx = currentQueue[idx];
-                const unsigned short int duration = this->mStudents[currentStudentIdx].mEffectivePresentationLength;
-                Utils::Interval slot{static_cast<unsigned short int>(startTime), static_cast<unsigned short int>(startTime + duration)};
-
-                if (slot.mEnd > static_cast<unsigned short int>(endTime))
-                {
-                    if (std::find(toRetrySchedulingSameDay.begin(), toRetrySchedulingSameDay.end(), currentStudentIdx) == toRetrySchedulingSameDay.end())
-                        toRetrySchedulingSameDay.push_back(currentStudentIdx);
-                    continue;
-                }
-
-                const TrySchedulingResultOptions TrySchedulingAfternoonResult = this->tryScheduleStudentAtSlotAtDayAtRoom(currentStudentIdx, dayNumber, slot, static_cast<unsigned short int>(currentRoomIdx));
-
-                if (TrySchedulingAfternoonResult == SCHEDULED)
-                {
-                    Scheduler::removeStudentFromAllVectors(toScheduleStudents, toRetrySchedulingSameDay, toRetrySchedulingNextWeekStudents, currentStudentIdx);
-                    scheduledOne = true;
-                    madeProgressThisDay = true;
-                    // update startTime from room pointers to reflect the booking
-                    ensureDayCapacity(dayNumber);
-                    Room &currentUsedRoom = mRooms[currentRoomIdx];
-                    // prefer morning or afternoon pointer that matches the slot
-                    if (slot.mStart >= GLOBAL_CONFIG.START_MORNING_TIME && slot.mEnd <= GLOBAL_CONFIG.END_MORNING_TIME)
-                        startTime = currentUsedRoom.mMorningPointerByDay[dayNumber];
-                    else if (slot.mStart >= GLOBAL_CONFIG.START_AFTERNOON_TIME && slot.mEnd <= GLOBAL_CONFIG.END_AFTERNOON_TIME)
-                        startTime = currentUsedRoom.mAfternoonPointerByDay[dayNumber];
-                    break;
-                }
-
-                if (TrySchedulingAfternoonResult == SAME_DAY)
-                {
-                    if (std::find(toRetrySchedulingSameDay.begin(), toRetrySchedulingSameDay.end(), currentStudentIdx) == toRetrySchedulingSameDay.end())
-                        toRetrySchedulingSameDay.push_back(currentStudentIdx);
-                }
-                else if (TrySchedulingAfternoonResult == NEXT_WEEK)
-                {
-                    if (std::find(toRetrySchedulingNextWeekStudents.begin(), toRetrySchedulingNextWeekStudents.end(), currentStudentIdx) == toRetrySchedulingNextWeekStudents.end())
-                        toRetrySchedulingNextWeekStudents.push_back(currentStudentIdx);
-
-                    currentQueue.erase(currentQueue.begin() + idx);
-                    --idx;
-                }
-            }
-
-            if (scheduledOne) break;
-        }
-
-        if (!scheduledOne) break;
-    }
 }
 
 void Scheduler::removeStudentFromAllVectors(vector<unsigned short int> &toScheduleStudents, vector<unsigned short int> &toRetrySchedulingSameDay, vector<unsigned short int> &toRetrySchedulingNextWeekStudents, const unsigned short int &toRemoveStudentIdx)
