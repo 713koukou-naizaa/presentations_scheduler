@@ -67,7 +67,7 @@ struct Scheduler
      *
      * @return Scheduler::TrySchedulingResultOptions The result of the scheduling attempt
      */
-    Scheduler::TrySchedulingResultOptions tryScheduleStudentAtSlotAtDayAtRoom(const unsigned short int &, const unsigned short int &, const Utils::Interval &, const unsigned short int &);
+    Scheduler::TrySchedulingResultOptions tryScheduleStudentAtSlotAtDayAtRoom(const unsigned short int &currentStudentIdx, const unsigned short int &currentDay, const Utils::Interval &currentSlot, const unsigned short int &currentRoomId);
 
     /**
      * @brief Tries to schedule all students until the time window is full for the given day, room and starting time, by iterating over the students to schedule and trying to schedule them at that slot, and updating the starting time and the lists of students to schedule accordingly
