@@ -11,9 +11,6 @@ using std::endl;
 
 Scheduler::Scheduler(vector<Student> pStudents, vector<Teacher> pTeachers, vector<Room> pRooms) : mStudents(std::move(pStudents)), mTeachers(std::move(pTeachers)), mRooms(std::move(pRooms)) {}
 
-// Try to schedule all students with greedy earliest-fit, it creates additional days if needed.
-// Improved scheduling algorithm: use three queues (toScheduleStudents, sameDay, toRetrySchedulingNextWeekStudents)
-// iterate days and rooms and try to schedule students respecting all constraints.
 bool Scheduler::scheduleAll()
 {
     // Initialize per-day capacity for day 0
@@ -80,7 +77,6 @@ bool Scheduler::scheduleAll()
     return true;
 }
 
-// Helper to try scheduling a single student at a given day, slot, room
 Scheduler::TrySchedulingResultOptions Scheduler::tryScheduleStudentAtSlotAtDayAtRoom(const unsigned short int &currentStudentIdx, const unsigned short int &currentDay, const Utils::Interval &currentSlot, const unsigned short int &currentRoomId)
 {
     const Student &studentToTryScheduling = this->mStudents[currentStudentIdx];
@@ -172,8 +168,8 @@ Scheduler::TrySchedulingResultOptions Scheduler::tryScheduleStudentAtSlotAtDayAt
     return TrySchedulingResultOptions::SCHEDULED;
 }
 
-// Ensure internal per-day containers are big enough
-void Scheduler::ensureDayCapacity(const unsigned short int pDay) {
+void Scheduler::ensureDayCapacity(const unsigned short int pDay)
+{
     for(auto &currentRoom : mRooms)
     {
         if (static_cast<unsigned short int>(currentRoom.mMorningPointerByDay.size()) <= pDay)
@@ -186,7 +182,6 @@ void Scheduler::ensureDayCapacity(const unsigned short int pDay) {
     for(auto &currentTeacher : this->mTeachers) { if (static_cast<unsigned short int>(currentTeacher.mBusyByDay.size()) <= pDay) currentTeacher.mBusyByDay.resize(pDay+1); }
 }
 
-// Try to schedule all students until the time window is full
 void Scheduler::trySchedulingUntilTimeWindowFull(const unsigned short dayNumber, const unsigned short int currentRoomIdx,
     int& startTime, const int endTime,
     std::vector<unsigned short int>& toRetrySchedulingSameDay, std::vector<unsigned short int>& toScheduleStudents, std::vector<unsigned short int>& toRetrySchedulingNextWeekStudents,
@@ -255,7 +250,6 @@ void Scheduler::trySchedulingUntilTimeWindowFull(const unsigned short dayNumber,
     }
 }
 
-// Helper to remove a student from all vectors by its index
 void Scheduler::removeStudentFromAllVectors(vector<unsigned short int> &toScheduleStudents, vector<unsigned short int> &toRetrySchedulingSameDay, vector<unsigned short int> &toRetrySchedulingNextWeekStudents, const unsigned short int &toRemoveStudentIdx)
 {
     Scheduler::removeStudentFromVector(toScheduleStudents, toRemoveStudentIdx);
@@ -263,11 +257,9 @@ void Scheduler::removeStudentFromAllVectors(vector<unsigned short int> &toSchedu
     Scheduler::removeStudentFromVector(toRetrySchedulingNextWeekStudents, toRemoveStudentIdx);
 }
 
-// Helper to remove a student from a vector by its index
 void Scheduler::removeStudentFromVector(vector<unsigned short int> &vectorToRemoveFrom, const unsigned short int &toRemoveStudentIdx)
 { vectorToRemoveFrom.erase(std::remove(vectorToRemoveFrom.begin(), vectorToRemoveFrom.end(), toRemoveStudentIdx), vectorToRemoveFrom.end()); }
 
-// Output final schedule to a JSON file
 string Scheduler::outputJSONResult() const
 {
     nlohmann::json schedule = nlohmann::json::array();
@@ -297,7 +289,6 @@ string Scheduler::outputJSONResult() const
 }
 
 // GCOVR_EXCL_START
-// Print final schedule
 void Scheduler::printSchedule()
 {
     // Sort assignments by day, start time

@@ -2,21 +2,28 @@
 #define ROOM_H
 
 #include <vector>
+#include <string>
 
 using std::vector;
-
-#include <string>
 using std::string;
 
+/**
+ * @brief Represents a room available for use in the algorithm
+ */
 struct Room
 {
     unsigned short int mId{};
     string mTag;
-    // per day, we keep two pointers: next available minute in morning and in afternoon
-    vector<int> mMorningPointerByDay; // next start minute in morning for that room
-    vector<int> mAfternoonPointerByDay; // next start minute in afternoon for that room
+    vector<int> mMorningPointerByDay; /// Pointer to the next start minute of the morning for that room
+    vector<int> mAfternoonPointerByDay; /// Pointer to the next start minute of the afternoon for that room
 
-    explicit Room(unsigned short int, string );
+    /**
+     * @brief Construct a new Room object
+     *
+     * @param pId
+     * @param pTag
+     */
+    explicit Room(unsigned short int pId, string pTag);
 };
 
-#endif
+#endif // ROOM_H
