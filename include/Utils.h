@@ -125,6 +125,15 @@ struct Utils
          * @return bool True if the intervals overlap, false otherwise
          */
         [[nodiscard]] bool overlaps(const Interval &pOther) const;
+
+        /**
+         * @brief Equality operator for Interval
+         *
+         * @param pOther
+         *
+         * @return bool True if intervals are equal, false otherwise
+         */
+        bool operator==(const Interval &pOther) const;
     };
 };
 

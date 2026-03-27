@@ -171,3 +171,5 @@ void Utils::printParameters()
 // GCOVR_EXCL_STOP
 
 bool Utils::Interval::overlaps(const Interval &pOther) const { return !(this->mEnd <= pOther.mStart || pOther.mEnd <= this->mStart); }
+
+bool Utils::Interval::operator==(const Interval &pOther) const { return this->mStart == pOther.mStart && this->mEnd == pOther.mEnd; }
