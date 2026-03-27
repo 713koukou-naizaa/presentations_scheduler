@@ -14,6 +14,8 @@ using std::cout;
 using std::endl;
 
 
+bool Utils::Interval::operator==(const Interval &pOther) const { return this->mStart == pOther.mStart && this->mEnd == pOther.mEnd; }
+
 void Utils::setGlobalConfig(const unsigned short int pStartMorningTime, const unsigned short int pEndMorningTime, const unsigned short int pStartAfternoonTime, const unsigned short int pEndAfternoonTime, const unsigned short int pNormalPresentationLength, const unsigned short int pAccommodatedPresentationLength, const unsigned short int pInBetweenBreakLength, const unsigned short int pMaxTeachersWeeklyWorkedTime, const unsigned short int pNbStudents, const unsigned short int pNbTeachers, const unsigned short int pNbRooms)
 {
     GLOBAL_CONFIG.START_MORNING_TIME = pStartMorningTime;
@@ -171,5 +173,3 @@ void Utils::printParameters()
 // GCOVR_EXCL_STOP
 
 bool Utils::Interval::overlaps(const Interval &pOther) const { return !(this->mEnd <= pOther.mStart || pOther.mEnd <= this->mStart); }
-
-bool Utils::Interval::operator==(const Interval &pOther) const { return this->mStart == pOther.mStart && this->mEnd == pOther.mEnd; }
