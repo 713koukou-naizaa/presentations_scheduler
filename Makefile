@@ -7,7 +7,7 @@ LDFLAGS_COV = $(LDFLAGS) -lgcov
 
 MAIN = main.cpp
 SRC = src/Scheduler.cpp src/Teacher.cpp src/Room.cpp src/Presentation.cpp src/Student.cpp src/Utils.cpp src/config.cpp
-TESTS_SRC = tests/SchedulerTest.cpp tests/UtilsTest.cpp tests/TeacherTest.cpp
+TESTS_SRC = tests/SchedulerTest.cpp tests/UtilsTest.cpp tests/UtilsStdinTest.cpp tests/TeacherTest.cpp
 
 APP_OUT = bin/main
 TESTS_OUT = bin/tests

@@ -26,6 +26,7 @@ find_package(GTest REQUIRED)
 add_executable(tests
         tests/SchedulerTest.cpp
         tests/UtilsTest.cpp
+        tests/UtilsStdinTest.cpp
         tests/TeacherTest.cpp
 )
 
@@ -39,4 +40,5 @@ target_link_libraries(tests
 enable_testing()
 add_test(NAME SchedulerTests COMMAND tests)
 add_test(NAME UtilsTests COMMAND tests)
+add_test(NAME UtilsStdinTests COMMAND tests)
 add_test(NAME TeacherTests COMMAND tests)
