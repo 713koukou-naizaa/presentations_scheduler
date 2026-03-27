@@ -56,7 +56,7 @@ struct Scheduler
      * @brief Tries to schedule all students
      *
      *
-     * @return bool True if all students were scheduled, false otherwise
+     * @return bool True once all students have been scheduled
      */
     bool scheduleAll();
 

@@ -43,7 +43,7 @@ bool Scheduler::scheduleAll()
     unsigned short int latestWeekNumber = 0;
 
     // Initialize per-day capacity for day 0
-    ensureDayCapacity(dayNumber);
+    this->ensureDayCapacity(dayNumber);
 
     // Loop until all lists empty
     while (!toScheduleStudents.empty() || !toRetrySchedulingSameDay.empty() || !toRetrySchedulingNextWeekStudents.empty())
@@ -57,7 +57,7 @@ bool Scheduler::scheduleAll()
         }
 
         // For each room, try to fill morning then afternoon for this day
-        ensureDayCapacity(dayNumber);
+        this->ensureDayCapacity(dayNumber);
 
         bool madeProgressThisDay = false;
 
