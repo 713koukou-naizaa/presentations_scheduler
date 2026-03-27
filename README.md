@@ -1,12 +1,11 @@
 # Presentations Scheduler
 
-A C++ scheduling component developed for the university web project `Gestion de suivi des stages` (see [GitHub repository link](https://github.com/nzoEtd/suivi-stage)) during my third year of my computer science bachelor's degree (BUT Informatique). The scheduler implements a greedy scheduling algorithm (see [Algorithm outline Markdown file](docs/algorithm_outlines.md)) and is designed to be invoked from PHP for web integration. The implementation favors compiled C++ for runtime performance and reduced energy consumption.
+A C++ scheduling component developed for the university web project `Gestion de suivi des stages` (see [GitHub repository link](https://github.com/nzoEtd/suivi-stage)) during my third year of my computer science bachelor's degree (BUT Informatique). The scheduler implements a greedy scheduling algorithm (see [Algorithm AlgoForge file](docs/presentations_scheduler_algorithm_algoforge.json) (open on [AlgoForge](https://algoforge.fr))) and is designed to be invoked from PHP for web integration. The implementation favors compiled C++ for runtime performance and reduced energy consumption.
 
 ## Highlights
 
 - Implemented in modern C++ for speed and low runtime overhead.
 - Intended to be called from a PHP web backend.
-- Includes a greedy scheduling algorithm.
 - Reads data from stdin, and returns the output into stdout.
 
 ## Tests
@@ -43,11 +42,11 @@ php prod_web_launcher.php
 ```
 .
 ├── bin/
-│   └── (compiled binaries)
+│   └── (compiled binaries : main, tests)
 ├── coverage-report/
 │   └── (latest test coverage output)
 ├── docs/
-│   └── (algorithm outline, related documentation, ...)
+│   └── (algorithm file)
 ├── include/
 │   ├── config.h
 │   ├── json.hpp
@@ -59,6 +58,7 @@ php prod_web_launcher.php
 │   └── Utils.h
 ├── src/
 │   ├── config.cpp
+│   ├── Presentation.cpp
 │   ├── Room.cpp
 │   ├── Scheduler.cpp
 │   ├── Student.cpp
@@ -69,14 +69,17 @@ php prod_web_launcher.php
 │   ├── TeacherTest.cpp
 │   └── UtilsTest.cpp
 ├── .gitignore
-├── Makefile
+├── CMakeLists.txt
+├── LICENSE
 ├── main.cpp
+├── Makefile
+├── php_prod_web_launcher.php
 └── README.md
 ```
 
 ## Notes
 - The binary is intended to be light-weight and fast; prefer invoking it as an external process from the PHP web app rather than embedding heavy runtimes.
-- Check `docs/algorithm_outlines.md` and `docs/greedy_scheduling_algorithm_algoforge.json` for algorithm details and rationale.
+- Check `docs/presentations_scheduler_algorithm_algoforge.json` for algorithm details and rationale.
 - The code is compiled the code statically to ensure the binary file has all the libraries it needs to run once on the server.
 - The binary file reads JSON formatted input data from stdin and sends JSON formatted output data to stdout
 - The JSON data have to be sent into stdin in the order used in [prod_web_launcher.php](prod_web_launcher.php).
