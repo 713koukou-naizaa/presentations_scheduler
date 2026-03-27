@@ -14,9 +14,9 @@
 class SchedulerTest : public testing::Test
 {
 protected:
-  vector<Student> students;
-  vector<Teacher> teachers;
-  vector<Room> rooms;
+  vector<Student> mStudents;
+  vector<Teacher> mTeachers;
+  vector<Room> mRooms;
 
   class TestRNG
   {
