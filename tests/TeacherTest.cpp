@@ -22,7 +22,7 @@ protected:
     GLOBAL_CONFIG.MAX_TEACHERS_WEEKLY_WORKED_TIME=180;
 
     teacher.mId = 1;
-    teacher.mName = "Test Teacher";
+    teacher.mName = "ZELIE LA MEILLEURE";
     teacher.mIsTechnical = true;
     teacher.mWeeklyRemainingMinutes = GLOBAL_CONFIG.MAX_TEACHERS_WEEKLY_WORKED_TIME;
     teacher.mBusyByDay.clear();
