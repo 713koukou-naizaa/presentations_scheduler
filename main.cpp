@@ -55,6 +55,6 @@ int main(const int argc, char* argv[])
     //schedule.printSchedule();
 
     cout << schedule.outputJSONResult();
-    
+
     return 0;
 }

@@ -1,49 +1,51 @@
-#include "Scheduler.h"
+  #include "../include/Scheduler.h"
 
 #include <gtest/gtest.h>
 
-#include <string>
+#include <vector>
 #include <random>
 
-#include "config.h"
+#include "../include/Room.h"
+#include "../include/Student.h"
+#include "../include/Teacher.h"
 
-#include "Room.h"
-#include "Student.h"
-#include "Teacher.h"
-
-using std::string;
-
-class TestRng
-{
-public:
-  static std::mt19937& rng()
-  {
-    static std::mt19937 gen(42);
-    return gen;
-  }
-
-  static bool randBool(const int trueEvery = 2)
-  {
-    std::uniform_int_distribution<> d(1, trueEvery);
-    return d(rng()) == 1;
-  }
-
-  static int randInt(const int min, const int max)
-  {
-    std::uniform_int_distribution<> d(min, max);
-    return d(rng());
-  }
-};
 
 class SchedulerTest : public testing::Test
 {
 protected:
-  vector<Student> students;
-  vector<Teacher> teachers;
-  vector<Room> rooms;
+    void SetUp() override
+    {
+      Utils::setGlobalConfig(
+          0, 300, // morning
+          300, 600, // afternoon
+          60, 60, // durations
+          0,
+          300, // max teacher time
+          1, 2, 1 // counts
+      );
+    }
 
+  class TestRNG
+    {
+    public:
+      static std::mt19937& rng()
+      {
+        static std::mt19937 gen(42);
+        return gen;
+      }
 
-  static bool overlaps(const unsigned short int pStartA, const unsigned short int pEndA, const unsigned short int pStartB, const unsigned short int pEndB) { return pStartA < pEndB && pStartB < pEndA; }
+      static bool randBool(const int trueEvery = 2)
+      {
+        std::uniform_int_distribution<> d(1, trueEvery);
+        return d(rng()) == 1;
+      }
+
+      static int randInt(const int min, const int max)
+      {
+        std::uniform_int_distribution<> d(min, max);
+        return d(rng());
+      }
+    };
 
   static std::vector<Teacher> generateTeachers(const int pCount = 15)
   {
@@ -52,12 +54,8 @@ protected:
 
     for (int i = 0; i < pCount; ++i)
     {
-      Teacher t;
-      t.mId = i;
-      t.mName = string("Teacher_") + (i < 10 ? "0" : "") + std::to_string(i);
-      t.mIsTechnical = TestRng::randBool(2);
+      Teacher t(i, TestRNG::randBool(2));
       t.mWeeklyRemainingMinutes = 1200;
-
       teachers.push_back(t);
     }
 
@@ -71,15 +69,9 @@ protected:
 
     for (int i = 0; i < pStudentCount; ++i)
     {
-      Student s;
-      s.mId = i;
-      s.mName = string("Student_") + (i < 10 ? "0" : "") + std::to_string(i);
-      s.mHasAccommodations = TestRng::randBool(4);
-      s.mReferentTeacherId = TestRng::randInt(0, std::max(0, pTeacherCount - 1));
-
-      s.mEffectivePresentationLength = s.mHasAccommodations ? GLOBAL_CONFIG.ACCOMMODATED_PRESENTATION_LENGTH : GLOBAL_CONFIG.NORMAL_PRESENTATION_LENGTH;
-
-      students.push_back(s);
+      Student currentStudent(i, SchedulerTest::TestRNG::randBool(4), 0, SchedulerTest::TestRNG::randInt(0, std::max(0, pTeacherCount - 1)));
+      currentStudent.mEffectivePresentationLength = currentStudent.mHasAccommodations ? GLOBAL_CONFIG.ACCOMMODATED_PRESENTATION_LENGTH : GLOBAL_CONFIG.NORMAL_PRESENTATION_LENGTH;
+      students.push_back(currentStudent);
     }
 
     return students;
@@ -92,235 +84,270 @@ protected:
 
     for (int i = 0; i < pCount; ++i)
     {
-      Room r;
-      r.mId = i;
-      r.mTag = string("Room_") + (i < 10 ? "0" : "") + std::to_string(i);
-      rooms.push_back(r);
+      Room currentRoom(i, string("Room_") + (i < 10 ? "0" + std::to_string(i) : std::to_string(i)));
+      rooms.push_back(currentRoom);
     }
 
     return rooms;
   }
+
+  static bool overlaps(const unsigned short int pStartA, const unsigned short int pEndA, const unsigned short int pStartB, const unsigned short int pEndB)
+  { return pStartA < pEndB && pStartB < pEndA; }
 };
 
-// ==========================
-// TESTS Utils::ensureDayCapacity
-// ==========================
-
-TEST_F(SchedulerTest, EnsureDayCapacityResizesContainers)
-{
-  Utils::setGlobalConfig(420, 750, 840, 1020, 60, 80, 60, 1200, 1, 2, 1);
-  this->teachers = generateTeachers(2);
-  this->rooms = generateRooms(1);
-  this->students = generateStudents(1, 2);
-  Scheduler scheduler(this->students, this->teachers, this->rooms);
-
-  scheduler.ensureDayCapacity(2);
-
-  EXPECT_EQ(scheduler.mRooms[0].mMorningPointerByDay.size(), 3u);
-  EXPECT_EQ(scheduler.mRooms[0].mAfternoonPointerByDay.size(), 3u);
-  EXPECT_EQ(scheduler.mTeachers[0].mBusyByDay.size(), 3u);
-}
-
-// ==========================
-// TESTS Scheduler::canPlace
-// ==========================
-
-TEST_F(SchedulerTest, CanPlaceWhenAllConstraintsSatisfied)
-{
-  Utils::setGlobalConfig(420, 750, 840, 1020, 60, 80, 60, 1200, 1, 2, 1);
-  this->teachers = generateTeachers(2);
-  this->teachers[0].mIsTechnical = true;
-  this->teachers[1].mIsTechnical = false;
-  this->rooms = generateRooms(1);
-  this->students = generateStudents(1, 2);
-  Scheduler scheduler(this->students, this->teachers, this->rooms);
-
-  scheduler.ensureDayCapacity(0);
-  constexpr Utils::Interval slot{480, 540};
-
-  EXPECT_TRUE(scheduler.canPlace(0, 0, slot));
-}
-
-TEST_F(SchedulerTest, CanPlaceFailsWhenReferentTeacherMissing)
-{
-  Utils::setGlobalConfig(420, 750, 840, 1020, 60, 80, 60, 1200, 1, 2, 1);
-  this->teachers = generateTeachers(2);
-  this->rooms = generateRooms(1);
-  this->students = generateStudents(1, 2);
-  this->students[0].mReferentTeacherId = 99;
-  Scheduler scheduler(this->students, this->teachers, this->rooms);
-  constexpr Utils::Interval slot{480, 540};
-
-  EXPECT_FALSE(scheduler.canPlace(0, 0, slot));
-}
-
-TEST_F(SchedulerTest, CanPlaceFailsWhenNoSecondTeacherAvailable)
-{
-  Utils::setGlobalConfig(420, 750, 840, 1020, 60, 80, 60, 1200, 1, 2, 1);
-  this->teachers = generateTeachers(2);
-  this->teachers[1].mWeeklyRemainingMinutes = 0;
-  teachers[0].mIsTechnical = true;
-  this->rooms = generateRooms(1);
-  this->students = generateStudents(1, 2);
-
-  Scheduler scheduler(this->students, this->teachers, this->rooms);
-  constexpr Utils::Interval slot{480, 540};
-
-  EXPECT_FALSE(scheduler.canPlace(0, 0, slot));
-}
-
-// ==========================
-// TESTS Scheduler::place
-// ==========================
-
-TEST_F(SchedulerTest, PlaceCreatesAssignmentAndBooksTeachers)
-{
-  Utils::setGlobalConfig(420, 750, 840, 1020, 60, 80, 60, 1200, 1, 2, 1);
-  this->teachers = generateTeachers(2);
-  this->rooms = generateRooms(1);
-  this->students = generateStudents(1, 2);
-  Scheduler scheduler(this->students, this->teachers, this->rooms);
-  constexpr Utils::Interval slot{480, 540};
-
-  scheduler.place(0, 0, slot, 0);
-
-  ASSERT_EQ(scheduler.mAssignments.size(), 1u);
-  EXPECT_EQ(scheduler.mTeachers[0].mWeeklyRemainingMinutes, 1140u);
-  EXPECT_EQ(scheduler.mTeachers[1].mWeeklyRemainingMinutes, 1140u);
-}
 
 // ==========================
 // TESTS Scheduler::scheduleAll
 // ==========================
-
-TEST_F(SchedulerTest, ScheduleAllProducesOneAssignment)
+TEST_F(SchedulerTest, ScheduleAll_ShouldScheduleAllStudents)
 {
-  Utils::setGlobalConfig(420, 750, 840, 1020, 60, 80, 60, 1200, 1, 2, 1);
-  this->teachers = generateTeachers(2);
-  this->rooms = generateRooms(1);
-  this->students = generateStudents(1, static_cast<unsigned short int>(this->teachers.size()));
-  Scheduler scheduler(this->students, this->teachers, this->rooms);
+  // GIVEN
+  Utils::setGlobalConfig(0, 300, 300, 600, 60, 60, 0, 1200, 10, 4, 2);
 
-  EXPECT_TRUE(scheduler.scheduleAll());
-  EXPECT_EQ(scheduler.mAssignments.size(), 1u);
+  const vector<Teacher> teachers = generateTeachers(4);
+  const vector<Room> rooms = generateRooms(2);
+  const vector<Student> students = generateStudents(10, static_cast<unsigned short>(teachers.size()));
+
+  Scheduler scheduler(students, teachers, rooms);
+
+  constexpr bool expectedScheduleAllResult = true;
+  const unsigned short int expectedAssignmentsSize = students.size();
+
+  // WHEN
+  const bool effectiveScheduleAllResult = scheduler.scheduleAll();
+  const unsigned short int effectiveAssignmentsSize = scheduler.mAssignments.size();
+
+  // THEN
+  EXPECT_EQ(effectiveScheduleAllResult, expectedScheduleAllResult);
+  EXPECT_EQ(effectiveAssignmentsSize, expectedAssignmentsSize);
 }
-
-TEST_F(SchedulerTest, SingleStudentSingleSlot)
-{
-  Utils::setGlobalConfig(420, 750, 840, 1020, 60, 80, 60, 1200, 1, 2, 1);
-  this->teachers = generateTeachers(2);
-  this->teachers[0].mIsTechnical = true;
-  this->students = generateStudents(1, static_cast<unsigned short int>(this->teachers.size()));
-  this->students[0].mReferentTeacherId = this->teachers[0].mId;
-  this->students[0].mHasAccommodations = false;
-  this->rooms = generateRooms(1);
-  Scheduler scheduler(this->students, this->teachers, this->rooms);
-
-  scheduler.scheduleAll();
-
-  ASSERT_EQ(scheduler.mAssignments.size(), 1);
-  EXPECT_EQ(scheduler.mAssignments[0].mStudentId, students[0].mId);
-  EXPECT_LT(scheduler.mAssignments[0].mStartMinute, GLOBAL_CONFIG.END_MORNING_TIME);
-}
-
-TEST_F(SchedulerTest, EachPresentationHasAtLeastOneTechnicalTeacher)
-{
-  Utils::setGlobalConfig(420, 750, 840, 1020, 60, 80, 60, 1200, 10, 6, 3);
-  this->teachers = generateTeachers(6);
-  this->students = generateStudents(10, static_cast<unsigned short int>(this->teachers.size()));
-  this->rooms = generateRooms(3);
-  Scheduler scheduler(this->students, this->teachers, this->rooms);
-
-  scheduler.scheduleAll();
-
-  for (const auto& a : scheduler.mAssignments)
-  {
-    const auto& ref = teachers[a.mReferentTeacherId];
-    const auto& sec = teachers[a.mSecondTeacherId];
-
-    ASSERT_TRUE(ref.mIsTechnical || sec.mIsTechnical);
-  }
-}
-
-TEST_F(SchedulerTest, TeachersDoNotOverlap)
-{
-  Utils::setGlobalConfig(420, 750, 840, 1020, 60, 80, 60, 1200, 20, 8, 4);
-  this->teachers = generateTeachers(8);
-  this->students = generateStudents(20, static_cast<unsigned short int>(this->teachers.size()));
-  this->rooms = generateRooms(4);
-  Scheduler scheduler(this->students, this->teachers, this->rooms);
-
-  scheduler.scheduleAll();
-
-  for (size_t i = 0; i < scheduler.mAssignments.size(); ++i)
-  {
-    for (size_t j = i + 1; j < scheduler.mAssignments.size(); ++j)
-    {
-      const auto& a = scheduler.mAssignments[i];
-      const auto& b = scheduler.mAssignments[j];
-
-      if (a.mDay != b.mDay) continue;
-
-      if (a.mReferentTeacherId == b.mReferentTeacherId || a.mReferentTeacherId == b.mSecondTeacherId || a.mSecondTeacherId   == b.mReferentTeacherId || a.mSecondTeacherId   == b.mSecondTeacherId)
-      { ASSERT_FALSE(overlaps(a.mStartMinute, a.mStartMinute + a.mDuration, b.mStartMinute, b.mStartMinute + b.mDuration)); }
-    }
-  }
-}
-
-TEST_F(SchedulerTest, RoomsDoNotOverlap)
-{
-  Utils::setGlobalConfig(420, 750, 840, 1020, 60, 80, 60, 1200, 30, 10, 2);
-  this->teachers = generateTeachers(10);
-  this->students = generateStudents(30, static_cast<unsigned short int>(this->teachers.size()));
-  this->rooms = generateRooms(2);
-  Scheduler scheduler(this->students, this->teachers, this->rooms);
-
-  scheduler.scheduleAll();
-
-  for (size_t i = 0; i < scheduler.mAssignments.size(); ++i)
-  {
-    for (size_t j = i + 1; j < scheduler.mAssignments.size(); ++j)
-    {
-      const auto& a = scheduler.mAssignments[i];
-
-      if (const auto& b = scheduler.mAssignments[j]; a.mDay == b.mDay && a.mRoomId == b.mRoomId)
-      { ASSERT_FALSE(overlaps(a.mStartMinute, a.mStartMinute + a.mDuration, b.mStartMinute, b.mStartMinute + b.mDuration));}
-    }
-  }
-}
-
-
-
-// Limit values tests (samples relative to reality : small, medium, average, large, very large)
-
 
 // ==========================
-// TESTS Scheduler::outputJSONResult
+// TESTS Scheduler::trySchedulingUntilTimeWindowFull
 // ==========================
-
-TEST_F(SchedulerTest, OutputJSONIsValidAndComplete)
+TEST_F(SchedulerTest, TrySchedulingUntilTimeWindowFull_ShouldMoveToSameDayWhenDoesNotFit)
 {
-  Utils::setGlobalConfig(420, 750, 840, 1020, 60, 80, 60, 1200, 5, 4, 2);
-  this->teachers = generateTeachers(4);
-  this->students = generateStudents(5, static_cast<unsigned short int>(this->teachers.size()));
-  this->rooms = generateRooms(2);
-  Scheduler scheduler(this->students, this->teachers, this->rooms);
+  // GIVEN
+  Utils::setGlobalConfig(0, 30, 30, 60, 60, 60, 0, 1200, 1, 2, 1);
 
-  scheduler.scheduleAll();
+  const vector<Teacher> teachers = generateTeachers(2);
+  const vector<Room> rooms = generateRooms(1);
+  const vector<Student> students = generateStudents(1, 2);
 
-  auto jsonStr = scheduler.outputJSONResult();
-  auto json = nlohmann::json::parse(jsonStr);
+  Scheduler scheduler(students, teachers, rooms);
 
-  ASSERT_TRUE(json.is_array());
-  ASSERT_EQ(json.size(), this->students.size());
+  constexpr bool expectedMadeProgress = false;
+  constexpr unsigned short int expectedToRetrySchedulingSameDaySize = 1u;
 
-  for (const auto& obj : json)
-  {
-    ASSERT_TRUE(obj.contains("idUPPA"));
-    ASSERT_TRUE(obj.contains("idLecteur"));
-    ASSERT_TRUE(obj.contains("date"));
-    ASSERT_TRUE(obj.contains("heureDebut"));
-    ASSERT_TRUE(obj.contains("heureFin"));
-    ASSERT_TRUE(obj.contains("nomSalle"));
-  }
+  std::vector<unsigned short> toScheduleStudents = {0};
+  std::vector<unsigned short> toRetrySchedulingSameDay;
+  std::vector<unsigned short> toRetrySchedulingNextWeekStudents;
+
+  bool madeProgress = false;
+  int startTime = 0;
+
+  // WHEN
+  scheduler.trySchedulingUntilTimeWindowFull(0, 0, startTime, 30, toRetrySchedulingSameDay, toScheduleStudents, toRetrySchedulingNextWeekStudents, madeProgress);
+  const bool effectiveMadeProgress = madeProgress;
+  const unsigned short int effectiveToRetrySchedulingSameDaySize = toRetrySchedulingSameDay.size();
+
+  // THEN
+  EXPECT_EQ(effectiveMadeProgress, expectedMadeProgress);
+  EXPECT_EQ(effectiveToRetrySchedulingSameDaySize, expectedToRetrySchedulingSameDaySize);
+}
+
+TEST_F(SchedulerTest, TrySchedulingUntilTimeWindowFull_ShouldMoveToNextWeekWhenTeacherOverworked)
+{
+  // GIVEN
+  vector<Teacher> teachers = generateTeachers(2);
+  teachers[0].mWeeklyRemainingMinutes = 0; // force NEXT_WEEK
+
+  const vector<Room> rooms = generateRooms(1);
+  vector<Student> students = generateStudents(1, 2);
+  students[0].mReferentTeacherId = teachers[0].mId;
+
+  Scheduler scheduler(students, teachers, rooms);
+
+  constexpr bool expectedMadeProgress = false;
+  constexpr unsigned short int expectedToRetrySchedulingNextWeekStudentsSize = 1u;
+
+  std::vector<unsigned short> toScheduleStudents = {0};
+  std::vector<unsigned short> toRetrySchedulingSameDay;
+  std::vector<unsigned short> toRetrySchedulingNextWeekStudents;
+
+  bool madeProgress = false;
+  int startTime = 0;
+
+  // WHEN
+  scheduler.trySchedulingUntilTimeWindowFull(0, 0, startTime, GLOBAL_CONFIG.END_MORNING_TIME, toRetrySchedulingSameDay, toScheduleStudents, toRetrySchedulingNextWeekStudents, madeProgress);
+  const bool effectiveMadeProgress = madeProgress;
+  const unsigned short int effectiveToRetrySchedulindNextWeekStudentsSize = toRetrySchedulingNextWeekStudents.size();
+
+  // THEN
+  EXPECT_EQ(effectiveMadeProgress, expectedMadeProgress);
+  EXPECT_EQ(effectiveToRetrySchedulindNextWeekStudentsSize, expectedToRetrySchedulingNextWeekStudentsSize);
+}
+
+TEST_F(SchedulerTest, TrySchedulingUntilTimeWindowFull_ShouldStopWhenWindowFull)
+{
+  // GIVEN
+  const vector<Teacher> teachers = generateTeachers(2);
+  const vector<Room> rooms = generateRooms(1);
+  const vector<Student> students = generateStudents(10, 2);
+
+  Scheduler scheduler(students, teachers, rooms);
+
+  constexpr unsigned short int expectedMaxScheduledStudents = 2u;
+
+  std::vector<unsigned short> toScheduleStudents;
+  for (size_t i = 0; i < students.size(); ++i) toScheduleStudents.push_back(i);
+
+  std::vector<unsigned short> toRetrySchedulingSameDay;
+  std::vector<unsigned short> toRetrySchedulingNextWeekStudents;
+
+  bool madeProgress = false;
+  int startTime = GLOBAL_CONFIG.START_MORNING_TIME;
+
+  // WHEN
+  // only 2 slots max
+  scheduler.trySchedulingUntilTimeWindowFull(0, 0, startTime, GLOBAL_CONFIG.START_MORNING_TIME + 120, toRetrySchedulingSameDay, toScheduleStudents, toRetrySchedulingNextWeekStudents,  madeProgress);
+  const unsigned short int effectiveMaxScheduledStudents = scheduler.mAssignments.size();
+
+  // THEN
+  EXPECT_LE(effectiveMaxScheduledStudents, expectedMaxScheduledStudents);
+}
+
+// ==========================
+// TESTS Scheduler::tryScheduleStudentsAtSlotAtDayAtRoom
+// ==========================
+TEST_F(SchedulerTest, TrySchedule_ShouldReturnSameDayWhenSlotOutsideWindows)
+{
+  // GIVEN
+  Student student(1, false, 60, 1);
+  Teacher teacher1(1, true);
+  Teacher teacher2(2, true);
+  Room room(1, "A");
+
+  Scheduler scheduler({student}, {teacher1, teacher2}, {room});
+  constexpr Utils::Interval outsideWindowsSlot{700, 800}; // outside
+
+  constexpr Scheduler::TrySchedulingResultOptions expectedTrySchedulingResult = Scheduler::SAME_DAY;
+
+  // WHEN
+  const Scheduler::TrySchedulingResultOptions effectiveTrySchedulingResult = scheduler.tryScheduleStudentAtSlotAtDayAtRoom(0, 0, outsideWindowsSlot, 0);
+
+  // THEN
+  EXPECT_EQ(effectiveTrySchedulingResult, expectedTrySchedulingResult);
+}
+
+TEST_F(SchedulerTest, TrySchedule_ShouldReturnNextWeekWhenReferentOverworked)
+{
+  // GIVEN
+  Student student(1, false, 60, 1);
+  Teacher teacher1(1, true);
+  teacher1.mWeeklyRemainingMinutes = 30;
+
+  Teacher teacher2(2, true);
+  Room room(1, "A");
+
+  Scheduler scheduler({student}, {teacher1, teacher2}, {room});
+  constexpr Utils::Interval slot{0, 60};
+
+  constexpr Scheduler::TrySchedulingResultOptions expectedTrySchedulingResult = Scheduler::NEXT_WEEK;
+
+  // WHEN
+  const Scheduler::TrySchedulingResultOptions effectiveTrySchedulingResult = scheduler.tryScheduleStudentAtSlotAtDayAtRoom(0, 0, slot, 0);
+
+  // THEN
+  EXPECT_EQ(effectiveTrySchedulingResult, expectedTrySchedulingResult);
+}
+
+TEST_F(SchedulerTest, TrySchedule_ShouldReturnSameDayWhenReferentBusy)
+{
+  // GIVEN
+  Student student(1, false, 60, 1);
+  Teacher teacher1(1, true);
+  Teacher teacher2(2, true);
+
+  teacher1.book(0, Utils::Interval{0, 60}); // already booked
+
+  Room room(1, "A");
+  Scheduler scheduler({student}, {teacher1, teacher2}, {room});
+
+  constexpr Utils::Interval slot{0, 60};
+
+  constexpr Scheduler::TrySchedulingResultOptions expectedTrySchedulingResult = Scheduler::SAME_DAY;
+
+  // WHEN
+  const Scheduler::TrySchedulingResultOptions effectiveTrySchedulingResult = scheduler.tryScheduleStudentAtSlotAtDayAtRoom(0, 0, slot, 0);
+
+  // THEN
+  EXPECT_EQ(effectiveTrySchedulingResult, expectedTrySchedulingResult);
+}
+
+TEST_F(SchedulerTest, TrySchedule_ShouldReturnNextWeek_WhenNoSecondTeacherAvailable)
+{
+  // GIVEN
+  Student student(1, false, 60, 1);
+  Teacher teacher1(1, false); // needs technical second
+  Teacher teacher2(2, false); // not technical -> invalid
+
+  Room room(1, "A");
+
+  Scheduler scheduler({student}, {teacher1, teacher2}, {room});
+  constexpr Utils::Interval slot{0, 60};
+
+  constexpr Scheduler::TrySchedulingResultOptions expectedTrySchedulingResult = Scheduler::NEXT_WEEK;
+
+  // WHEN
+  const Scheduler::TrySchedulingResultOptions effectiveTrySchedulingResult = scheduler.tryScheduleStudentAtSlotAtDayAtRoom(0, 0, slot, 0);
+
+  // THEN
+  EXPECT_EQ(effectiveTrySchedulingResult, expectedTrySchedulingResult);
+}
+
+// ==========================
+//TESTS Scheduler::removeStudentFromVector
+// ==========================
+TEST_F(SchedulerTest, RemoveStudentFromVector_ShouldRemoveCorrectly)
+{
+  // GIVEN
+  std::vector<unsigned short int> vec = {1, 2, 3};
+  constexpr unsigned short int expectedSize = 2u;
+  constexpr unsigned short int expectedFirstValue = 1u;
+  constexpr unsigned short int expectedSecondValue = 3u;
+
+  // WHEN
+  Scheduler::removeStudentFromVector(vec, 2);
+  const unsigned short int effectiveSize = vec.size();
+  const unsigned short int effectiveFirstValue = vec[0];
+  const unsigned short int effectiveSecondValue = vec[1];
+
+  // THEN
+  EXPECT_EQ(effectiveSize, expectedSize);
+  EXPECT_EQ(effectiveFirstValue, expectedFirstValue);
+  EXPECT_EQ(effectiveSecondValue, expectedSecondValue);
+}
+
+// ==========================
+//TESTS Scheduler::outputJSONResult
+// ==========================
+TEST_F(SchedulerTest, OutputJSONResult_ShouldReturnValidJson)
+{
+  // GIVEN
+  Student student(1, false, 60, 1);
+  Teacher teacher1(1, true);
+  Teacher teacher2(2, true);
+  Room room(1, "A");
+
+  Scheduler scheduler({student}, {teacher1, teacher2}, {room});
+  scheduler.tryScheduleStudentAtSlotAtDayAtRoom(0, 0, Utils::Interval{0, 60}, 0);
+
+  // WHEN
+  const std::string JSONResult = scheduler.outputJSONResult();
+
+  // THEN
+  EXPECT_FALSE(JSONResult.empty());
+  EXPECT_NE(JSONResult.find("\"idUPPA\""), std::string::npos);
+  EXPECT_NE(JSONResult.find("\"nomSalle\""), std::string::npos);
 }

@@ -2,8 +2,5 @@
 
 #include <utility>
 
-#include "config.h"
 
-Room::Room() = default;
-
-Room::Room(const int pId, string pTag, const int pInitialDays) : mId(pId), mTag(std::move(pTag)), mMorningPointerByDay(pInitialDays, GLOBAL_CONFIG.START_MORNING_TIME), mAfternoonPointerByDay(pInitialDays, GLOBAL_CONFIG.START_AFTERNOON_TIME) {}
+Room::Room(const unsigned short int pId, string pTag) : mId(pId), mTag(std::move(pTag)) {}
