@@ -1,211 +1,138 @@
-#include "Utils.h"
+#include "../include/Utils.h"
 
 #include <gtest/gtest.h>
-
-#include <cstdio>
-#include <fstream>
-#include <sstream>
-#include <string>
-
-#include "config.h"
-
-#include "Room.h"
-#include "Student.h"
-#include "Teacher.h"
-
-using std::string;
 
 
 class UtilsTest : public testing::Test
 {
 protected:
-    std::streambuf *origCin = nullptr;
-    std::istringstream inputBuffer;
-
-    void SetUp() override
-    {
-        // Save original cin
-        origCin = std::cin.rdbuf();
-        GLOBAL_CONFIG.NORMAL_PRESENTATION_LENGTH=60;
-        GLOBAL_CONFIG.ACCOMMODATED_PRESENTATION_LENGTH=80;
-    }
-
-    void TearDown() override
-    {
-        // Restore cin
-        (void)std::cin.rdbuf(origCin);
-    }
-
-    void setCinInput(const std::string& input)
-    {
-        inputBuffer.str(input);
-        inputBuffer.clear();
-        (void)std::cin.rdbuf(inputBuffer.rdbuf());
-    }
+    Utils::Interval sixtyToOneHundredTwentyInterval{60, 120};
+    Utils::Interval OneHundredToOneHundredSixtyInterval{100, 160};
+    Utils::Interval OneHundredTwentyToOneHundredEightyInterval{120, 180};
+    Utils::Interval TwoHundredToTwoHundredSixtyInterval{200, 260};
 };
 
 // ==========================
-// TESTS Utils::readNextJsonFromStdin
+// TESTS Interval::overlaps
 // ==========================
 
-TEST_F(UtilsTest, ParsesJsonCorrectly)
+TEST_F(UtilsTest, IntervalOverlaps_ShouldReturnTrueWhenIntervalsIntersect)
 {
-    setCinInput("{\"key\":\"value\"}\n");
+    // GIVEN
+    constexpr bool expectedMethodResult = true;
 
-    nlohmann::json result = Utils::readNextJsonFromStdin();
+    // WHEN
+    const bool effectiveMethodResult = sixtyToOneHundredTwentyInterval.overlaps(OneHundredToOneHundredSixtyInterval);
 
-    EXPECT_EQ(result["key"], "value");
+    // THEN
+    EXPECT_EQ(effectiveMethodResult, expectedMethodResult);
 }
 
-TEST_F(UtilsTest, SkipsWhitespacesAndEmptyLines)
+TEST_F(UtilsTest, IntervalOverlaps_ShouldReturnFalseWhenIntervalsDoNotIntersect)
 {
-    setCinInput("\n   \t \n{\"a\":1}\n");
+    // GIVEN
+    constexpr bool expectedMethodResult = false;
 
-    nlohmann::json result = Utils::readNextJsonFromStdin();
+    // WHEN
+    const bool effectiveMethodResult = sixtyToOneHundredTwentyInterval.overlaps(TwoHundredToTwoHundredSixtyInterval);
 
-    EXPECT_EQ(result["a"], 1);
+    // THEN
+    EXPECT_EQ(effectiveMethodResult, expectedMethodResult);
 }
 
-TEST_F(UtilsTest, ThrowsParseErrorOnInvalidJson)
+TEST_F(UtilsTest, IntervalOverlaps_ShouldReturnFalseWhenIntervalsAreAdjacent)
 {
-    setCinInput("not_a_json\n");
+    // GIVEN
+    constexpr bool expectedMethodResult = false;
 
-    EXPECT_THROW({Utils::readNextJsonFromStdin();}, nlohmann::json::parse_error);
+    // WHEN
+    // sixtyToOneHundredTwentyInterval.mEnd == OneHundredTwentyToOneHundredEightyInterval.mStart
+    const bool effectiveMethodResult = sixtyToOneHundredTwentyInterval.overlaps(OneHundredTwentyToOneHundredEightyInterval);
+
+    // THEN
+    EXPECT_EQ(effectiveMethodResult, expectedMethodResult);
 }
 
-TEST_F(UtilsTest, ThrowsRuntimeErrorOnEmptyInput)
+TEST_F(UtilsTest, IntervalOverlaps_ShouldReturnTrueWhenIntervalFullyContained)
 {
-    setCinInput("");
+    // GIVEN
+    constexpr bool expectedMethodResult = true;
+    constexpr Utils::Interval container{50, 200};
+    constexpr Utils::Interval contained{60, 120};
 
-    EXPECT_THROW({Utils::readNextJsonFromStdin();}, std::runtime_error);
-}
+    // WHEN
+    const bool effectiveMethodResult = container.overlaps(contained);
 
-TEST_F(UtilsTest, ThrowsRuntimeErrorOnWhitespacesLines)
-{
-    setCinInput("\n   \n\t\n");
-
-    EXPECT_THROW({Utils::readNextJsonFromStdin();}, std::runtime_error);
+    // THEN
+    EXPECT_EQ(effectiveMethodResult, expectedMethodResult);
 }
 
 // ==========================
-// TESTS Utils::loadStudents/Teachers/RoomsFromStdin
+// TESTS Interval::operator==
 // ==========================
 
-TEST_F(UtilsTest, LoadsStudentsCorrectly)
+TEST_F(UtilsTest, IntervalEquality_ShouldReturnTrueWhenSame)
 {
-    setCinInput(R"([{"id":1,"name":"Alice","hasAccommodations":true,"referentTeacherId":100},{"id":2,"name":"Bob","hasAccommodations":false,"referentTeacherId":101}])");
+    // GIVEN
+    constexpr bool expectedMethodResult = true;
+    const Utils::Interval copy{sixtyToOneHundredTwentyInterval.mStart, sixtyToOneHundredTwentyInterval.mEnd};
 
-    const auto students = Utils::loadStudentsFromStdin();
+    // WHEN
+    const bool effectiveMethodResult = sixtyToOneHundredTwentyInterval == copy;
 
-    ASSERT_EQ(students.size(), 2u);
-    EXPECT_EQ(students[0].mId, 1u);
-    EXPECT_EQ(students[0].mName, "Alice");
-    EXPECT_TRUE(students[0].mHasAccommodations);
-    EXPECT_EQ(students[0].mEffectivePresentationLength, GLOBAL_CONFIG.ACCOMMODATED_PRESENTATION_LENGTH);
-    EXPECT_EQ(students[0].mReferentTeacherId, 100u);
-
-    EXPECT_EQ(students[1].mId, 2u);
-    EXPECT_EQ(students[1].mName, "Bob");
-    EXPECT_FALSE(students[1].mHasAccommodations);
-    EXPECT_EQ(students[1].mEffectivePresentationLength, GLOBAL_CONFIG.NORMAL_PRESENTATION_LENGTH);
-    EXPECT_EQ(students[1].mReferentTeacherId, 101u);
+    // THEN
+    EXPECT_EQ(effectiveMethodResult, expectedMethodResult);
 }
 
-TEST_F(UtilsTest, LoadsTeachersCorrectly)
+TEST_F(UtilsTest, IntervalEquality_ShouldReturnFalseWhenDifferent)
 {
-    setCinInput(R"([{"id":10,"name":"Mr. Smith","isTechnical":true},{"id":11,"name":"Ms. Johnson","isTechnical":false}])");
+    // GIVEN
+    constexpr bool expectedMethodResult = false;
 
-    const auto teachers = Utils::loadTeachersFromStdin();
+    // WHEN
+    const bool effectiveMethodResult = sixtyToOneHundredTwentyInterval == OneHundredToOneHundredSixtyInterval;
 
-    ASSERT_EQ(teachers.size(), 2u);
-    EXPECT_EQ(teachers[0].mId, 10u);
-    EXPECT_EQ(teachers[0].mName, "Mr. Smith");
-    EXPECT_TRUE(teachers[0].mIsTechnical);
-
-    EXPECT_EQ(teachers[1].mId, 11u);
-    EXPECT_EQ(teachers[1].mName, "Ms. Johnson");
-    EXPECT_FALSE(teachers[1].mIsTechnical);
-}
-
-TEST_F(UtilsTest, LoadsRoomsCorrectly)
-{
-    setCinInput(R"([{"id":101,"tag":"A1"},{"id":102,"tag":"B2"}])");
-
-    const auto rooms = Utils::loadRoomsFromStdin();
-
-    ASSERT_EQ(rooms.size(), 2u);
-    EXPECT_EQ(rooms[0].mId, 101u);
-    EXPECT_EQ(rooms[0].mTag, "A1");
-
-    EXPECT_EQ(rooms[1].mId, 102u);
-    EXPECT_EQ(rooms[1].mTag, "B2");
-}
-
-TEST_F(UtilsTest, ThrowsRuntimeErrorOnEmptyInputForStudents)
-{
-    setCinInput("");
-
-    EXPECT_THROW(Utils::loadStudentsFromStdin(), std::runtime_error);
-}
-
-TEST_F(UtilsTest, ThrowsParseErrorOnInvalidJsonForTeachers)
-{
-    setCinInput("invalid_json");
-
-    EXPECT_THROW(Utils::loadTeachersFromStdin(), nlohmann::json::parse_error);
-}
-
-TEST_F(UtilsTest, ThrowsRuntimeErrorOnWhistespacesInputForRooms)
-{
-    setCinInput("\n  \t\n");
-
-    EXPECT_THROW(Utils::loadRoomsFromStdin(), std::runtime_error);
+    // THEN
+    EXPECT_EQ(effectiveMethodResult, expectedMethodResult);
 }
 
 // ==========================
 // TESTS Utils::minutesToHHMM
 // ==========================
 
-TEST_F(UtilsTest, ZeroMinutes) { EXPECT_EQ(Utils::minutesToHHMM(0), "00:00"); }
-
-TEST_F(UtilsTest, ExactHour) { EXPECT_EQ(Utils::minutesToHHMM(60), "01:00"); }
-
-TEST_F(UtilsTest, HoursAndMinutes) { EXPECT_EQ(Utils::minutesToHHMM(125), "02:05"); }
-
-TEST_F(UtilsTest, LeadingZeros) { EXPECT_EQ(Utils::minutesToHHMM(9), "00:09"); }
-
-// ==========================
-// TESTS Utils::Interval::overlaps
-// ==========================
-
-TEST_F(UtilsTest, PartialOverlap)
+TEST_F(UtilsTest, MinutesToHHMM_ShouldReturnCorrectFormat)
 {
-    constexpr Utils::Interval a{10, 20};
-    constexpr Utils::Interval b{15, 25};
+    // GIVEN
+    // 150 minutes = 2h30
+    constexpr char expectedMethodResult[] = "02:30";
 
-    EXPECT_TRUE(a.overlaps(b));
+    // WHEN
+    const std::string effectiveMethodResult = Utils::minutesToHHMM(150);
+
+    // THEN
+    EXPECT_EQ(effectiveMethodResult, expectedMethodResult);
 }
 
-TEST_F(UtilsTest, NoOverlapTouchingBoundary)
+TEST_F(UtilsTest, MinutesToHHMM_ShouldReturnMidnightCorrectly)
 {
-    constexpr Utils::Interval a{10, 20};
-    constexpr Utils::Interval b{20, 30};
+    // GIVEN
+    constexpr char expectedMethodResult[] = "00:00";
 
-    EXPECT_FALSE(a.overlaps(b));
+    // WHEN
+    const std::string effectiveMethodResult = Utils::minutesToHHMM(0);
+
+    // THEN
+    EXPECT_EQ(effectiveMethodResult, expectedMethodResult);
 }
 
-TEST_F(UtilsTest, OneContainedInAnother)
+TEST_F(UtilsTest, MinutesToHHMM_ShouldReturnHourOnlyCorrectly)
 {
-    constexpr Utils::Interval a{10, 30};
-    constexpr Utils::Interval b{15, 20};
+    // GIVEN
+    constexpr char expectedMethodResult[] = "03:00";
 
-    EXPECT_TRUE(a.overlaps(b));
-}
+    // WHEN
+    const std::string effectiveMethodResult = Utils::minutesToHHMM(180);
 
-TEST_F(UtilsTest, CompletelySeparate)
-{
-    constexpr Utils::Interval a{10, 15};
-    constexpr Utils::Interval b{20, 25};
-
-    EXPECT_FALSE(a.overlaps(b));
+    // THEN
+    EXPECT_EQ(effectiveMethodResult, expectedMethodResult);
 }

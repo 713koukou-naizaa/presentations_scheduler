@@ -8,6 +8,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_library(core
         src/config.cpp
         src/Room.cpp
+        src/Presentation.cpp
+        src/Student.cpp
         src/Scheduler.cpp
         src/Teacher.cpp
         src/Utils.cpp
@@ -23,8 +25,9 @@ find_package(GTest REQUIRED)
 # ---- Tests ----
 add_executable(tests
         tests/SchedulerTest.cpp
-        tests/TeacherTest.cpp
         tests/UtilsTest.cpp
+        tests/UtilsStdinTest.cpp
+        tests/TeacherTest.cpp
 )
 
 target_link_libraries(tests
@@ -36,5 +39,6 @@ target_link_libraries(tests
 
 enable_testing()
 add_test(NAME SchedulerTests COMMAND tests)
-add_test(NAME TeacherTests COMMAND tests)
 add_test(NAME UtilsTests COMMAND tests)
+add_test(NAME UtilsStdinTests COMMAND tests)
+add_test(NAME TeacherTests COMMAND tests)

@@ -13,6 +13,9 @@
 using std::cout;
 using std::endl;
 
+
+bool Utils::Interval::operator==(const Interval &pOther) const { return this->mStart == pOther.mStart && this->mEnd == pOther.mEnd; }
+
 void Utils::setGlobalConfig(const unsigned short int pStartMorningTime, const unsigned short int pEndMorningTime, const unsigned short int pStartAfternoonTime, const unsigned short int pEndAfternoonTime, const unsigned short int pNormalPresentationLength, const unsigned short int pAccommodatedPresentationLength, const unsigned short int pInBetweenBreakLength, const unsigned short int pMaxTeachersWeeklyWorkedTime, const unsigned short int pNbStudents, const unsigned short int pNbTeachers, const unsigned short int pNbRooms)
 {
     GLOBAL_CONFIG.START_MORNING_TIME = pStartMorningTime;
@@ -38,19 +41,19 @@ void Utils::displayVectors(const vector<Student> &pStudents, const vector<Teache
     cout << "Students: " << endl;
     for (const auto &student : pStudents)
     {
-        cout << "\t" << student.mId << " " << student.mName << " " << student.mHasAccommodations << " " << student.mEffectivePresentationLength << " " << student.mReferentTeacherId << endl;
+        cout << "\t" << student.mId << " " << student.mHasAccommodations << " " << student.mEffectivePresentationLength << " " << student.mReferentTeacherId << endl;
     }
 
     cout << "Teachers: " << endl;
     for (const auto &teacher : pTeachers)
     {
-        cout << "\t" << teacher.mId << " " << teacher.mName << " " << teacher.mIsTechnical << " " << teacher.mWeeklyRemainingMinutes << endl;
+        cout << "\t" << teacher.mId << " " << teacher.mIsTechnical << " " << teacher.mWeeklyRemainingMinutes << endl;
     }
 
     cout << "Rooms: " << endl;
     for (const auto &room : pRooms)
     {
-        cout << "\t" << room.mId << " " << room.mTag << endl;
+        cout << "\t" << room.mId << endl;
     }
 }
 // GCOVR_EXCL_STOP
@@ -81,12 +84,10 @@ vector<Student> Utils::loadStudentsFromStdin()
 
     for (const auto &currentJsonItem : jsonInstance)
     {
-        Student currentStudent;
-        currentStudent.mId = currentJsonItem.at("id").get<unsigned int>();
-        currentStudent.mName = currentJsonItem.at("name").get<string>();
-        currentStudent.mHasAccommodations = currentJsonItem.at("hasAccommodations").get<bool>();
-        currentStudent.mEffectivePresentationLength = currentStudent.mHasAccommodations ? GLOBAL_CONFIG.ACCOMMODATED_PRESENTATION_LENGTH : GLOBAL_CONFIG.NORMAL_PRESENTATION_LENGTH;
-        currentStudent.mReferentTeacherId = currentJsonItem.at("referentTeacherId").get<unsigned short int>();
+        Student currentStudent(currentJsonItem.at("id").get<unsigned int>(),
+                               currentJsonItem.at("hasAccommodations").get<bool>(),
+                               currentJsonItem.at("hasAccommodations").get<bool>() ? GLOBAL_CONFIG.ACCOMMODATED_PRESENTATION_LENGTH : GLOBAL_CONFIG.NORMAL_PRESENTATION_LENGTH,
+                               currentJsonItem.at("referentTeacherId").get<unsigned short int>());
 
         students.push_back(currentStudent);
     }
@@ -103,10 +104,8 @@ vector<Teacher> Utils::loadTeachersFromStdin()
 
     for (const auto &currentJsonItem : jsonInstance)
     {
-        Teacher currentTeacher;
-        currentTeacher.mId = currentJsonItem.at("id").get<unsigned short int>();
-        currentTeacher.mName = currentJsonItem.at("name").get<string>();
-        currentTeacher.mIsTechnical = currentJsonItem.at("isTechnical").get<bool>();
+        Teacher currentTeacher(currentJsonItem.at("id").get<unsigned short int>(),
+                               currentJsonItem.at("isTechnical").get<bool>());
 
         teachers.push_back(currentTeacher);
     }
@@ -123,9 +122,8 @@ vector<Room> Utils::loadRoomsFromStdin()
 
     for (const auto &currentJsonItem : jsonInstance)
     {
-        Room currentRoom;
-        currentRoom.mId = currentJsonItem.at("id").get<unsigned short int>();
-        currentRoom.mTag = currentJsonItem.at("tag").get<string>();
+        Room currentRoom(currentJsonItem.at("id").get<unsigned short int>(),
+                        currentJsonItem.at("tag").get<string>());
 
         rooms.push_back(currentRoom);
     }

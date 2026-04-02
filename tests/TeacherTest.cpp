@@ -1,95 +1,210 @@
-#include "Teacher.h"
+#include "../include/Teacher.h"
 
 #include <gtest/gtest.h>
-
-#include <cstdio>
-#include <string>
-
-#include "config.h"
-
-#include "Utils.h"
-
-using std::string;
 
 
 class TeacherTest : public testing::Test
 {
 protected:
-  Teacher teacher;
+    static constexpr unsigned short int mDayNumberZero = 0;
+    
+    Teacher mMockTechnicalTeacher{1, true};
 
-  void SetUp() override
-  {
-    GLOBAL_CONFIG.MAX_TEACHERS_WEEKLY_WORKED_TIME=180;
+    Utils::Interval mOneHourSlotOne{60, 120}; // 1h
+    Utils::Interval mSlotOverlappingWithOneHourSlotOne{100, 160}; // overlaps with slot1
+    Utils::Interval mSlotAdjacentNotOverlappingWithOneHourSlotOneStart{120, 180}; // adjacent, does not overlap (inclusive start, exclusive end)
+    Utils::Interval mNoOverlapSlot{200, 260}; // no overlap
 
-    teacher.mId = 1;
-    teacher.mName = "Test Teacher";
-    teacher.mIsTechnical = true;
-    teacher.mWeeklyRemainingMinutes = GLOBAL_CONFIG.MAX_TEACHERS_WEEKLY_WORKED_TIME;
-    teacher.mBusyByDay.clear();
-  }
+    // 300 minutes = 5 hours
+    void SetUp() override { this->mMockTechnicalTeacher.mWeeklyRemainingMinutes = 300; }
 };
+
 
 // ==========================
 // TESTS Teacher::isAvailable
 // ==========================
 
-TEST_F(TeacherTest, IsAvailableWhenFreeAndSufficientTime)
+TEST_F(TeacherTest, IsAvailable_ShouldReturnTrueWhenEnoughTimeAndNoBookings)
 {
-  constexpr Utils::Interval slot{30, 60};
+    // GIVEN
+    constexpr bool expectedAvailableResult = true;
 
-  EXPECT_TRUE(teacher.isAvailable(0, slot));
+    // WHEN
+    const bool effectiveAvailableResult = this->mMockTechnicalTeacher.isAvailable(TeacherTest::mDayNumberZero, this->mOneHourSlotOne);
+
+    // THEN
+    EXPECT_EQ(effectiveAvailableResult, expectedAvailableResult);
 }
 
-TEST_F(TeacherTest, IsNotAvailableWhenInsufficientWeeklyMinutes)
+TEST_F(TeacherTest, IsAvailable_ShouldReturnFalseWhenNotEnoughWeeklyRemainingMinutesLeft)
 {
-  teacher.mWeeklyRemainingMinutes = 20;
+    // GIVEN
+    constexpr bool expectedAvailableResult = false;
+    this->mMockTechnicalTeacher.mWeeklyRemainingMinutes = 30; // less than slot duration (60)
 
-  constexpr Utils::Interval slot{0, 30};
+    // WHEN
+    const bool effectiveAvailableResult = this->mMockTechnicalTeacher.isAvailable(TeacherTest::mDayNumberZero, this->mOneHourSlotOne);
 
-  EXPECT_FALSE(teacher.isAvailable(0, slot));
+    // THEN
+    EXPECT_EQ(effectiveAvailableResult, expectedAvailableResult);
 }
 
-TEST_F(TeacherTest, IsNotAvailableWhenOverlapsExistingBooking)
+TEST_F(TeacherTest, IsAvailable_ShouldReturnFalsewhenExactSameIntervalOverlaps)
 {
-  constexpr Utils::Interval bookedSlot{10, 40};
+    // GIVEN
+    constexpr bool expectedAvailableResult = false;
+    this->mMockTechnicalTeacher.book(TeacherTest::mDayNumberZero, this->mOneHourSlotOne);
 
-  teacher.book(0, bookedSlot);
+    // WHEN
+    const bool effectiveAvailableResult = this->mMockTechnicalTeacher.isAvailable(TeacherTest::mDayNumberZero, this->mOneHourSlotOne);
 
-  constexpr Utils::Interval overlappingSlot{30, 50};
-  EXPECT_FALSE(teacher.isAvailable(0, overlappingSlot));
+    // THEN
+    EXPECT_EQ(effectiveAvailableResult, expectedAvailableResult);
 }
 
-TEST_F(TeacherTest, IsAvailableWhenNoOverlap)
+TEST_F(TeacherTest, IsAvailable_ShouldReturnFalseWhenContainedIntervalOverlaps)
 {
-  teacher.book(0, Utils::Interval{10, 20});
+    // GIVEN
+    constexpr bool expectedAvailableResult = false;
+    this->mMockTechnicalTeacher.book(TeacherTest::mDayNumberZero, this->mOneHourSlotOne);
 
-  constexpr Utils::Interval notOverlappingSlot{20, 30};
+    // WHEN
+    // contained slot
+    const bool effectiveAvailableResult = this->mMockTechnicalTeacher.isAvailable(TeacherTest::mDayNumberZero, Utils::Interval{60, 180});
 
-  EXPECT_TRUE(teacher.isAvailable(0, notOverlappingSlot));
+    // THEN
+    EXPECT_EQ(effectiveAvailableResult, expectedAvailableResult);
 }
+
+TEST_F(TeacherTest, IsAvailable_ShouldReturnFalseWhenOverlappingBooking)
+{
+    // GIVEN
+    constexpr bool expectedAvailableResult = false;
+    this->mMockTechnicalTeacher.book(TeacherTest::mDayNumberZero, this->mOneHourSlotOne);
+
+    // WHEN
+    const bool effectiveAvailableResult = this->mMockTechnicalTeacher.isAvailable(TeacherTest::mDayNumberZero, this->mSlotOverlappingWithOneHourSlotOne);
+
+    // THEN
+    EXPECT_EQ(effectiveAvailableResult, expectedAvailableResult);
+}
+
+TEST_F(TeacherTest, IsAvailable_ShouldReturnTrueWhenAdjacentIntervalsDoNotOverlap)
+{
+    // GIVEN
+    constexpr bool expectedAvailableResult = true;
+    this->mMockTechnicalTeacher.book(TeacherTest::mDayNumberZero, this->mOneHourSlotOne);
+
+    // WHEN
+    const bool effectiveAvailableResult = this->mMockTechnicalTeacher.isAvailable(TeacherTest::mDayNumberZero, this->mSlotAdjacentNotOverlappingWithOneHourSlotOneStart);
+
+    EXPECT_EQ(effectiveAvailableResult, expectedAvailableResult);
+}
+
+TEST_F(TeacherTest, IsAvailable_ShouldReturnTrueWhenNonOverlappingBooking)
+{
+    // GIVEN
+    constexpr bool expectedAvailableResult = true;
+    this->mMockTechnicalTeacher.book(TeacherTest::mDayNumberZero, this->mOneHourSlotOne);
+
+    // WHEN
+    const bool effectiveAvailableResult = this->mMockTechnicalTeacher.isAvailable(TeacherTest::mDayNumberZero, this->mNoOverlapSlot);
+
+    // THEN
+    EXPECT_EQ(effectiveAvailableResult, expectedAvailableResult);
+}
+
+TEST_F(TeacherTest, IsAvailable_ShouldReturnTrueWhenNewDayAutoResize)
+{
+    // GIVEN
+    constexpr bool expectedAvailableResult = true;
+    constexpr unsigned short int newDayNumber = 1; // new day
+
+    // WHEN
+    const bool effectiveAvailableResult = this->mMockTechnicalTeacher.isAvailable(newDayNumber, this->mOneHourSlotOne);
+
+    // THEN
+    EXPECT_EQ(effectiveAvailableResult, expectedAvailableResult);
+}
+
 
 // ==========================
 // TESTS Teacher::book
 // ==========================
 
-TEST_F(TeacherTest, BookReducesWeeklyMinutes)
+TEST_F(TeacherTest, Book_ShouldAddSlotAndReduceWeeklyRemainingMinutes)
 {
-  constexpr Utils::Interval slot{30, 60};
-  const unsigned short before = teacher.mWeeklyRemainingMinutes;
+    // GIVEN
+    constexpr unsigned short int expectedWeeklyRemainingMinutes = 240;
 
-  teacher.book(0, slot);
+    // WHEN
+    this->mMockTechnicalTeacher.book(TeacherTest::mDayNumberZero, this->mOneHourSlotOne);
+    const unsigned short int effectiveWeeklyRemainingMinutes = this->mMockTechnicalTeacher.mWeeklyRemainingMinutes;
 
-  EXPECT_EQ(teacher.mWeeklyRemainingMinutes, before - 30);
+    // THEN
+    EXPECT_EQ(effectiveWeeklyRemainingMinutes, expectedWeeklyRemainingMinutes);
+    EXPECT_EQ(this->mMockTechnicalTeacher.mBusyByDay[TeacherTest::mDayNumberZero].back(), this->mOneHourSlotOne);
 }
 
-TEST_F(TeacherTest, BookStoresIntervalInCorrectDay)
+TEST_F(TeacherTest, Book_ShouldRenderTeacherUnavailable)
 {
-  constexpr Utils::Interval slot{15, 45};
+    // GIVEN
+    constexpr bool expectedAvailableResult = false;
+    this->mMockTechnicalTeacher.book(TeacherTest::mDayNumberZero, this->mOneHourSlotOne);
 
-  teacher.book(2, slot);
+    // WHEN
+    const bool effectiveAvailableResult = this->mMockTechnicalTeacher.isAvailable(TeacherTest::mDayNumberZero, this->mSlotOverlappingWithOneHourSlotOne);
 
-  ASSERT_EQ(teacher.mBusyByDay.size(), 3u);
-  ASSERT_EQ(teacher.mBusyByDay[2].size(), 1u);
-  EXPECT_EQ(teacher.mBusyByDay[2][0].mStart, 15u);
-  EXPECT_EQ(teacher.mBusyByDay[2][0].mEnd, 45u);
+    // THEN
+    EXPECT_EQ(effectiveAvailableResult, expectedAvailableResult);
+}
+
+TEST_F(TeacherTest, Book_ShouldAllowMultipleNonOverlappingBookings)
+{
+    // GIVEN
+    constexpr bool expectedSlotOverlappingWithOneHourSlotOneAvailableResult = false;
+    constexpr bool expectedSlotOverlappingWithNoOverlapSlotAvailableResult = false;
+
+    // WHEN
+    this->mMockTechnicalTeacher.book(TeacherTest::mDayNumberZero, this->mOneHourSlotOne);
+    // overlaps this->mOneHourSlotOne
+    const bool effectiveSlotOverlappingWithOneHourSlotOneAvailableResult = this->mMockTechnicalTeacher.isAvailable(TeacherTest::mDayNumberZero, this->mSlotOverlappingWithOneHourSlotOne);
+    this->mMockTechnicalTeacher.book(TeacherTest::mDayNumberZero, this->mNoOverlapSlot);
+    // overlaps this->mSlotOverlappingWithNoOverlapSlot
+    const bool effectiveSlotOverlappingWithNoOverlapSlotAvailableResult = this->mMockTechnicalTeacher.isAvailable(TeacherTest::mDayNumberZero, Utils::Interval{210, 250});
+
+    // THEN
+    EXPECT_EQ(effectiveSlotOverlappingWithOneHourSlotOneAvailableResult, expectedSlotOverlappingWithOneHourSlotOneAvailableResult);
+    EXPECT_EQ(effectiveSlotOverlappingWithNoOverlapSlotAvailableResult, expectedSlotOverlappingWithNoOverlapSlotAvailableResult);
+}
+
+TEST_F(TeacherTest, Book_ShouldNotAffectOtherDays)
+{
+    // GIVEN
+    constexpr bool expectedSlotOverlappingWithOneHourSlotOneAvailableResult = false;
+    constexpr bool expectedOneHourSlotOneAvailableResult = true;
+    constexpr unsigned short int unaffectedDayNumber = 3; // unaffected day
+    this->mMockTechnicalTeacher.book(3, this->mOneHourSlotOne);
+
+    // WHEN
+    const bool effectiveOneHourSlotOneAvailableResult = this->mMockTechnicalTeacher.isAvailable(TeacherTest::mDayNumberZero, this->mOneHourSlotOne);
+    const bool effectiveSlotOverlappingWithOneHourSlotOne = this->mMockTechnicalTeacher.isAvailable(unaffectedDayNumber, this->mSlotOverlappingWithOneHourSlotOne);
+
+    // THEN
+    EXPECT_EQ(effectiveOneHourSlotOneAvailableResult, expectedOneHourSlotOneAvailableResult);
+    EXPECT_EQ(effectiveSlotOverlappingWithOneHourSlotOne, expectedSlotOverlappingWithOneHourSlotOneAvailableResult);
+}
+
+TEST_F(TeacherTest, Book_ShouldConsumeAllWeeklyRemainingMinutes)
+{
+    // GIVEN
+    constexpr bool expectedAvailableResult = false;
+    this->mMockTechnicalTeacher.mWeeklyRemainingMinutes = 60;
+    this->mMockTechnicalTeacher.book(TeacherTest::mDayNumberZero, this->mOneHourSlotOne); // no time left after booking
+
+    // WHEN
+    const bool effectiveAvailableResult = this->mMockTechnicalTeacher.isAvailable(TeacherTest::mDayNumberZero, this->mNoOverlapSlot);
+
+    // THEN
+    EXPECT_EQ(effectiveAvailableResult, expectedAvailableResult);
 }
