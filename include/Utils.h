@@ -8,7 +8,7 @@ struct Teacher;
 struct Room;
 struct Student;
 
-#include "json.hpp"
+#include "externals/json.hpp"
 
 using std::string;
 using std::vector;
