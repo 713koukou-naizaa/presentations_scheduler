@@ -1,0 +1,27 @@
+var searchData=
+[
+  ['mafternoonpointerbyday_0',['mAfternoonPointerByDay',['../structRoom.html#a81a01fa9e7b6a2ddece2ed698ab6499b',1,'Room']]],
+  ['massignments_1',['mAssignments',['../structScheduler.html#a14ae2e6fdefb8752a3d3d83ee74479e1',1,'Scheduler']]],
+  ['max_5fteachers_5fweekly_5fworked_5ftime_2',['MAX_TEACHERS_WEEKLY_WORKED_TIME',['../structConfig.html#a420145f389918f4ddf6bcd70f6fba916',1,'Config']]],
+  ['mbreaklength_3',['mBreakLength',['../structScheduler.html#a3f802bc2ef820c59874a3ee1a37671a7',1,'Scheduler']]],
+  ['mbusybyday_4',['mBusyByDay',['../structTeacher.html#a6526fa468a74b5f86d217725b6201e3a',1,'Teacher']]],
+  ['mday_5',['mDay',['../structPresentation.html#a404f6fc2c68f4f02d2ced38059d404c9',1,'Presentation']]],
+  ['mduration_6',['mDuration',['../structPresentation.html#a8e235352a8930b3a49fb3185a866a7d5',1,'Presentation']]],
+  ['meffectivepresentationlength_7',['mEffectivePresentationLength',['../structStudent.html#a59c72431d2203b0e3e5fbce22136eaf3',1,'Student']]],
+  ['mend_8',['mEnd',['../structUtils_1_1Interval.html#a3981f66ec39d970ca67e69eea45b0ed6',1,'Utils::Interval']]],
+  ['mhasaccommodations_9',['mHasAccommodations',['../structStudent.html#a9e0df81d495fd79d403a846ed3c1befc',1,'Student']]],
+  ['mid_10',['mid',['../structRoom.html#ac9110125c5edc46e0ed3d9f167c1297d',1,'Room::mId'],['../structStudent.html#ae960446eb93ebbfd123b116ee87dc46c',1,'Student::mId'],['../structTeacher.html#abf30e2e16966fb2d63bc56663dc43b26',1,'Teacher::mId']]],
+  ['mistechnical_11',['mIsTechnical',['../structTeacher.html#a2b2f1b7346762c18bcebfb4b7749cf2f',1,'Teacher']]],
+  ['mmorningpointerbyday_12',['mMorningPointerByDay',['../structRoom.html#a340987bf47a38b191857a2f727cccb32',1,'Room']]],
+  ['mreferentteacherid_13',['mreferentteacherid',['../structPresentation.html#a98bdda1242dc1a880135d00025d0028c',1,'Presentation::mReferentTeacherId'],['../structStudent.html#a95d293987b40aca55b29f742b002ae0f',1,'Student::mReferentTeacherId']]],
+  ['mroomid_14',['mRoomId',['../structPresentation.html#a3f93f6a6b71757da39cd3d44cce524d8',1,'Presentation']]],
+  ['mrooms_15',['mRooms',['../structScheduler.html#a2c54f25e87a803e87cfda341d086c6e7',1,'Scheduler']]],
+  ['msecondteacherid_16',['mSecondTeacherId',['../structPresentation.html#a366ab8cbac100bbcf4f062075a39e735',1,'Presentation']]],
+  ['mstart_17',['mStart',['../structUtils_1_1Interval.html#aa0be524b8c59f952846b2a99fdb21783',1,'Utils::Interval']]],
+  ['mstartminute_18',['mStartMinute',['../structPresentation.html#a8d24acc5ac0ef2bb852134b50a74ff64',1,'Presentation']]],
+  ['mstudentid_19',['mStudentId',['../structPresentation.html#a6e16db6f7cc0810693d1c54964c25e6d',1,'Presentation']]],
+  ['mstudents_20',['mStudents',['../structScheduler.html#a97dfa3ebbd8a09b16c03e1a0cdbad06e',1,'Scheduler']]],
+  ['mtag_21',['mTag',['../structRoom.html#af5948cda66a235e4bf6e0b46b0f079d8',1,'Room']]],
+  ['mteachers_22',['mTeachers',['../structScheduler.html#a1f08a803163fb6b3c20acdc9895f75a6',1,'Scheduler']]],
+  ['mweeklyremainingminutes_23',['mWeeklyRemainingMinutes',['../structTeacher.html#ac8549c9a751b5ad3d9c632eb0ceb31b9',1,'Teacher']]]
+];
